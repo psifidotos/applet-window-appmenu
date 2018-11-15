@@ -1,0 +1,3 @@
+module org.kde.private.windowAppMenu
+
+plugin appmenuplugin

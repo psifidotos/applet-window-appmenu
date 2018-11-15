@@ -1,0 +1,39 @@
+*~
+.*
+!.arcconfig
+!.gitignore
+# Ignore hidden files
+.directory
+
+# build directory
+build/
+
+# backup files
+*.autosave
+*.desktop~
+*.gitignore~
+*.js~
+*.kate-swp
+*.qml~
+*.sh~
+*.xml~
+.*.cpp~
+.*.h~
+.*.js~
+.*.pot~
+.*.po~
+.*.qml~
+.*.txt~
+.*.xml~
+.*~
+*.*.user
+*.*.orig
+
+# locale files
+*.mo
+
+# KDevelop Project files
+*.kdev4
+.kdev4/
+
+build-kdev/
