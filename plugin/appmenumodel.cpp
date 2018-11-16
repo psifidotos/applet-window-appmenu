@@ -26,8 +26,8 @@
 #include <config-X11.h>
 
 #if HAVE_X11
-#include <QX11Info>
-#include <xcb/xcb.h>
+    #include <QX11Info>
+    #include <xcb/xcb.h>
 #endif
 
 #include <QAction>
@@ -43,7 +43,7 @@ static const QByteArray s_x11AppMenuServiceNamePropertyName = QByteArrayLiteral(
 static const QByteArray s_x11AppMenuObjectPathPropertyName = QByteArrayLiteral("_KDE_NET_WM_APPMENU_OBJECT_PATH");
 
 #if HAVE_X11
-static QHash<QByteArray, xcb_atom_t> s_atoms;
+    static QHash<QByteArray, xcb_atom_t> s_atoms;
 #endif
 
 class KDBusMenuImporter : public DBusMenuImporter
@@ -51,22 +51,20 @@ class KDBusMenuImporter : public DBusMenuImporter
 
 public:
     KDBusMenuImporter(const QString &service, const QString &path, QObject *parent)
-        : DBusMenuImporter(service, path, parent)
-    {
+        : DBusMenuImporter(service, path, parent) {
 
     }
 
 protected:
-    QIcon iconForName(const QString &name) override
-    {
+    QIcon iconForName(const QString &name) override {
         return QIcon::fromTheme(name);
     }
 
 };
 
 AppMenuModel::AppMenuModel(QObject *parent)
-            : QAbstractListModel(parent),
-              m_serviceWatcher(new QDBusServiceWatcher(this))
+    : QAbstractListModel(parent),
+      m_serviceWatcher(new QDBusServiceWatcher(this))
 {
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppMenuModel::onActiveWindowChanged);
     connect(KWindowSystem::self()
@@ -75,18 +73,23 @@ AppMenuModel::AppMenuModel(QObject *parent)
             , &AppMenuModel::onWindowChanged);
 
     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {
-        if (!m_updatePending) {
+        if (!m_updatePending)
+        {
             m_updatePending = true;
             QMetaObject::invokeMethod(this, "update", Qt::QueuedConnection);
         }
     });
+
+    connect(this, &AppMenuModel::screenGeometryChanged, this, [this] {
+        onWindowChanged(m_currentWindowId);
+    });
+
     onActiveWindowChanged(KWindowSystem::activeWindow());
 
     m_serviceWatcher->setConnection(QDBusConnection::sessionBus());
     //if our current DBus connection gets lost, close the menu
     //we'll select the new menu when the focus changes
-    connect(m_serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, this, [this](const QString &serviceName)
-    {
+    connect(m_serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, this, [this](const QString & serviceName) {
         if (serviceName == m_serviceName) {
             setMenuAvailable(false);
             emit modelNeedsUpdate();
@@ -110,6 +113,21 @@ void AppMenuModel::setMenuAvailable(bool set)
     }
 }
 
+QRect AppMenuModel::screenGeometry() const
+{
+    return m_screenGeometry;
+}
+
+void AppMenuModel::setScreenGeometry(QRect geometry)
+{
+    if (m_screenGeometry == geometry) {
+        return;
+    }
+
+    m_screenGeometry = geometry;
+    emit screenGeometryChanged();
+}
+
 bool AppMenuModel::visible() const
 {
     return m_visible;
@@ -126,6 +144,7 @@ void AppMenuModel::setVisible(bool visible)
 int AppMenuModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+
     if (!m_menuAvailable || !m_menu) {
         return 0;
     }
@@ -152,34 +171,43 @@ void AppMenuModel::onActiveWindowChanged(WId id)
     }
 
 #if HAVE_X11
+
     if (KWindowSystem::isPlatformX11()) {
         auto *c = QX11Info::connection();
 
-        auto getWindowPropertyString = [c, this](WId id, const QByteArray &name) -> QByteArray {
+        auto getWindowPropertyString = [c, this](WId id, const QByteArray & name) -> QByteArray {
             QByteArray value;
-            if (!s_atoms.contains(name)) {
+
+            if (!s_atoms.contains(name))
+            {
                 const xcb_intern_atom_cookie_t atomCookie = xcb_intern_atom(c, false, name.length(), name.constData());
                 QScopedPointer<xcb_intern_atom_reply_t, QScopedPointerPodDeleter> atomReply(xcb_intern_atom_reply(c, atomCookie, nullptr));
+
                 if (atomReply.isNull()) {
                     return value;
                 }
 
                 s_atoms[name] = atomReply->atom;
+
                 if (s_atoms[name] == XCB_ATOM_NONE) {
-                     return value;
+                    return value;
                 }
             }
 
             static const long MAX_PROP_SIZE = 10000;
             auto propertyCookie = xcb_get_property(c, false, id, s_atoms[name], XCB_ATOM_STRING, 0, MAX_PROP_SIZE);
             QScopedPointer<xcb_get_property_reply_t, QScopedPointerPodDeleter> propertyReply(xcb_get_property_reply(c, propertyCookie, nullptr));
-            if (propertyReply.isNull()) {
+
+            if (propertyReply.isNull())
+            {
                 return value;
             }
 
-            if (propertyReply->type == XCB_ATOM_STRING && propertyReply->format == 8 && propertyReply->value_len > 0) {
+            if (propertyReply->type == XCB_ATOM_STRING && propertyReply->format == 8 && propertyReply->value_len > 0)
+            {
                 const char *data = (const char *) xcb_get_property_value(propertyReply.data());
                 int len = propertyReply->value_len;
+
                 if (data) {
                     value = QByteArray(data, data[len - 1] ? len : len - 1);
                 }
@@ -196,25 +224,29 @@ void AppMenuModel::onActiveWindowChanged(WId id)
                 updateApplicationMenu(serviceName, menuObjectPath);
                 return true;
             }
+
             return false;
         };
 
         KWindowInfo info(id, NET::WMState | NET::WMWindowType, NET::WM2TransientFor);
+
         if (info.hasState(NET::SkipTaskbar) ||
-                info.windowType(NET::UtilityMask) == NET::Utility ||
-                info.windowType(NET::DesktopMask) == NET::Desktop) {
+            info.windowType(NET::UtilityMask) == NET::Utility ||
+            info.windowType(NET::DesktopMask) == NET::Desktop) {
             return;
         }
 
         m_currentWindowId = id;
 
         WId transientId = info.transientFor();
+
         // lok at transient windows first
         while (transientId) {
             if (updateMenuFromWindowIfHasMenu(transientId)) {
                 setVisible(true);
                 return;
             }
+
             transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
         }
 
@@ -232,6 +264,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         setMenuAvailable(false);
         emit modelNeedsUpdate();
     }
+
 #endif
 
 }
@@ -239,8 +272,11 @@ void AppMenuModel::onActiveWindowChanged(WId id)
 void AppMenuModel::onWindowChanged(WId id)
 {
     if (m_currentWindowId == id) {
-        KWindowInfo info(id, NET::WMState);
-        setVisible(!info.isMinimized());
+        KWindowInfo info(id, NET::WMState | NET::WMGeometry);
+
+        const bool contained = m_screenGeometry.isNull() || m_screenGeometry.contains(info.geometry().center());
+
+        setVisible(!info.isMinimized() && contained);
     }
 }
 
@@ -255,11 +291,13 @@ QHash<int, QByteArray> AppMenuModel::roleNames() const
 QVariant AppMenuModel::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
+
     if (row < 0 || !m_menuAvailable || !m_menu) {
         return QVariant();
     }
 
     const auto actions = m_menu->actions();
+
     if (row >= actions.count()) {
         return QVariant();
     }
@@ -279,6 +317,7 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
         if (m_importer) {
             QMetaObject::invokeMethod(m_importer, "updateMenu", Qt::QueuedConnection);
         }
+
         return;
     }
 
@@ -294,18 +333,21 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
     m_importer = new KDBusMenuImporter(serviceName, menuObjectPath, this);
     QMetaObject::invokeMethod(m_importer, "updateMenu", Qt::QueuedConnection);
 
-    connect(m_importer.data(), &DBusMenuImporter::menuUpdated, this, [=](QMenu *menu) {
+    connect(m_importer.data(), &DBusMenuImporter::menuUpdated, this, [ = ](QMenu * menu) {
         m_menu = m_importer->menu();
+
         if (m_menu.isNull() || menu != m_menu) {
             return;
         }
 
         //cache first layer of sub menus, which we'll be popping up
-        for(QAction *a: m_menu->actions()) {
+        for (QAction *a : m_menu->actions()) {
             // signal dataChanged when the action changes
             connect(a, &QAction::changed, this, [this, a] {
-                if (m_menuAvailable && m_menu) {
+                if (m_menuAvailable && m_menu)
+                {
                     const int actionIdx = m_menu->actions().indexOf(a);
+
                     if (actionIdx > -1) {
                         const QModelIndex modelIdx = index(actionIdx, 0);
                         emit dataChanged(modelIdx, modelIdx);
@@ -324,7 +366,7 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
         emit modelNeedsUpdate();
     });
 
-    connect(m_importer.data(), &DBusMenuImporter::actionActivationRequested, this, [this](QAction *action) {
+    connect(m_importer.data(), &DBusMenuImporter::actionActivationRequested, this, [this](QAction * action) {
         // TODO submenus
         if (!m_menuAvailable || !m_menu) {
             return;
@@ -332,6 +374,7 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
 
         const auto actions = m_menu->actions();
         auto it = std::find(actions.begin(), actions.end(), action);
+
         if (it != actions.end()) {
             requestActivateIndex(it - actions.begin());
         }
@@ -349,8 +392,10 @@ bool AppMenuModel::nativeEventFilter(const QByteArray &eventType, void *message,
 #if HAVE_X11
     auto e = static_cast<xcb_generic_event_t *>(message);
     const uint8_t type = e->response_type & ~0x80;
+
     if (type == XCB_PROPERTY_NOTIFY) {
         auto *event = reinterpret_cast<xcb_property_notify_event_t *>(e);
+
         if (event->window == m_delayedMenuWindowId) {
 
             auto serviceNameAtom = s_atoms.value(s_x11AppMenuServiceNamePropertyName);
@@ -364,6 +409,7 @@ bool AppMenuModel::nativeEventFilter(const QByteArray &eventType, void *message,
             }
         }
     }
+
 #else
     Q_UNUSED(message);
 #endif

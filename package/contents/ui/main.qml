@@ -194,6 +194,7 @@ Item {
 
     AppMenuPrivate.AppMenuModel {
         id: appMenuModel
+        screenGeometry: plasmoid.screenGeometry
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel

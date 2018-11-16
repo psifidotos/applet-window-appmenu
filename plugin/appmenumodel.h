@@ -27,6 +27,7 @@
 #include <QStringList>
 #include <KWindowSystem>
 #include <QPointer>
+#include <QRect>
 
 class QMenu;
 class QAction;
@@ -41,12 +42,14 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
     Q_PROPERTY(bool menuAvailable READ menuAvailable WRITE setMenuAvailable NOTIFY menuAvailableChanged)
     Q_PROPERTY(bool visible READ visible NOTIFY visibleChanged)
 
+    Q_PROPERTY(QRect screenGeometry READ screenGeometry WRITE setScreenGeometry NOTIFY screenGeometryChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
     ~AppMenuModel() override;
 
-    enum AppMenuRole {
-        MenuRole = Qt::UserRole+1, // TODO this should be Qt::DisplayRole
+    enum AppMenuRole
+    {
+        MenuRole = Qt::UserRole + 1, // TODO this should be Qt::DisplayRole
         ActionRole
     };
 
@@ -60,6 +63,9 @@ public:
     void setMenuAvailable(bool set);
 
     bool visible() const;
+
+    QRect screenGeometry() const;
+    void setScreenGeometry(QRect geometry);
 
 signals:
     void requestActivateIndex(int index);
@@ -77,11 +83,14 @@ signals:
     void menuAvailableChanged();
     void modelNeedsUpdate();
     void visibleChanged();
+    void screenGeometryChanged();
 
 private:
     bool m_menuAvailable;
     bool m_updatePending = false;
     bool m_visible = true;
+
+    QRect m_screenGeometry;
 
     //! current active window used
     WId m_currentWindowId = 0;
