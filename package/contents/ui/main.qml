@@ -76,6 +76,17 @@ Item {
         rowSpacing: units.smallSpacing
         columnSpacing: units.smallSpacing
 
+        //BEGIN Latte Dock Communicator
+        property QtObject latteBridge: null
+        onLatteBridgeChanged: {
+            if (latteBridge) {
+                latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
+            }
+        }
+
+        readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
+        //END  Latte Dock Communicator
+
         Component.onCompleted: {
             plasmoid.nativeInterface.buttonGrid = buttonGrid
 
@@ -107,41 +118,75 @@ Item {
             id: buttonRepeater
             model: appMenuModel
 
-            PlasmaComponents.ToolButton {
+            Rectangle {
+                id: button
                 readonly property int buttonIndex: index
 
-                Layout.preferredWidth: minimumWidth
+                Layout.preferredWidth: buttonLbl.width + 2 * units.smallSpacing
                 Layout.fillWidth: root.vertical
                 Layout.fillHeight: !root.vertical
-                text: {
-                    var text = activeMenu;
 
-                    var alt = keystateSource.data.Alt;
-                    if (!alt || !alt.Pressed) {
-                        // StyleHelpers.removeMnemonics
-                        text = text.replace(/([^&]*)&(.)([^&]*)/g, function (match, p1, p2, p3) {
-                            return p1.concat(p2, p3);
-                        });
+                visible: buttonLbl.text !== ""
+
+                // fake highlighted
+                color: menuOpened || buttonMouseArea.containsMouse ?
+                           (enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor) :'transparent'
+
+                radius: 2
+
+                property bool menuOpened: plasmoid.nativeInterface.currentIndex === index
+
+                signal clicked;
+
+                onClicked: {
+                    plasmoid.nativeInterface.trigger(this, index);
+                }
+
+                PlasmaComponents.Label{
+                    id: buttonLbl
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.verticalCenter: parent.verticalCenter
+
+                    text: {
+                        var text = activeMenu;
+
+                        var alt = keystateSource.data.Alt;
+                        if (!alt || !alt.Pressed) {
+                            // StyleHelpers.removeMnemonics
+                            text = text.replace(/([^&]*)&(.)([^&]*)/g, function (match, p1, p2, p3) {
+                                return p1.concat(p2, p3);
+                            });
+                        }
+
+                        return text;
                     }
 
-                    return text;
-                }
-                // fake highlighted
-                checkable: plasmoid.nativeInterface.currentIndex === index
-                checked: checkable
-                visible: text !== ""
-                onClicked: {
-                    plasmoid.nativeInterface.trigger(this, index)
-
-                    checked = Qt.binding(function() {
-                        return plasmoid.nativeInterface.currentIndex === index;
-                    });
+                    color: {
+                        if (menuOpened || buttonMouseArea.containsMouse) {
+                            if (enforceLattePalette) {
+                                return latteBridge.palette.highlightedTextColor;
+                            } else {
+                                return theme.highlightedTextColor;
+                            }
+                        } else {
+                            if (enforceLattePalette) {
+                                return latteBridge.palette.textColor;
+                            } else {
+                                return theme.textColor;
+                            }
+                        }
+                    }
                 }
 
                 // QMenu opens on press, so we'll replicate that here
                 MouseArea {
+                    id: buttonMouseArea
                     anchors.fill: parent
-                    onPressed: parent.clicked()
+                    hoverEnabled: true
+
+                    onPressed: {
+                       button.clicked();
+                    }
                 }
             }
         }
