@@ -37,6 +37,8 @@
 #include <QDBusServiceWatcher>
 #include <QGuiApplication>
 
+#include <QDebug>
+
 #include <dbusmenuimporter.h>
 
 static const QByteArray s_x11AppMenuServiceNamePropertyName = QByteArrayLiteral("_KDE_NET_WM_APPMENU_SERVICE_NAME");

@@ -20,39 +20,80 @@
 
 import QtQuick 2.0
 import QtQuick.Controls 1.0 as Controls
-import QtQuick.Layouts 1.1 as Layouts
+import QtQuick.Layouts 1.1
 
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
-Layouts.ColumnLayout {
+Item {
     id: configGeneral
 
     property alias cfg_compactView: compactViewRadioButton.checked
+    property alias cfg_filterByScreen: screenAwareChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
-    Controls.ExclusiveGroup {
-        id: viewOptionGroup
-    }
+    // used from the ui
+    readonly property real centerFactor: 0.35
+    readonly property int minimumWidth: 220
 
-    Controls.RadioButton {
-        id: compactViewRadioButton
-        enabled: !disableSetting
-        text: i18n("Use single button for application menu")
-        exclusiveGroup: viewOptionGroup
-    }
-    Controls.RadioButton {
-        id: fullViewRadioButton
-        //this checked binding is just for the initial load in case
-        //compactViewCheckBox is not checked. Then exclusive group manages it
-        enabled: !disableSetting
-        checked: !compactViewRadioButton.checked
-        text: i18n("Show full application menu")
-        exclusiveGroup: viewOptionGroup
-    }
+    ColumnLayout {
+        id:mainColumn
+        spacing: units.largeSpacing
+        Layout.fillWidth: true
 
-    Item {
-        Layouts.Layout.fillHeight: true
+        GridLayout{
+            columns: 2
+
+            Controls.ExclusiveGroup {
+                id: viewOptionGroup
+            }
+
+            Controls.Label{
+                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+                text: i18n("Buttons:")
+                horizontalAlignment: Text.AlignRight
+            }
+
+            Controls.RadioButton {
+                id: fullViewRadioButton
+                //this checked binding is just for the initial load in case
+                //compactViewCheckBox is not checked. Then exclusive group manages it
+                enabled: !disableSetting
+                checked: !compactViewRadioButton.checked
+                text: i18n("Show full application menu")
+                exclusiveGroup: viewOptionGroup
+            }
+
+            Controls.Label{
+            }
+
+            Controls.RadioButton {
+                id: compactViewRadioButton
+                enabled: !disableSetting
+                text: i18n("Use single button for application menu")
+                exclusiveGroup: viewOptionGroup
+            }
+        }
+
+        GridLayout{
+            columns: 2
+
+            Controls.Label{
+                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+                text: i18n("Filters:")
+                horizontalAlignment: Text.AlignRight
+            }
+
+            Controls.CheckBox {
+                id: screenAwareChk
+                text: i18n("Show only menus from current screen")
+            }
+        }
+
+        Item {
+            Layout.fillHeight: true
+        }
+
     }
 }

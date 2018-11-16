@@ -194,7 +194,7 @@ Item {
 
     AppMenuPrivate.AppMenuModel {
         id: appMenuModel
-        screenGeometry: plasmoid.screenGeometry
+        screenGeometry: plasmoid.configuration.filterByScreen ? plasmoid.screenGeometry : Qt.rect(-1, -1, 0, 0) //null geometry
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel

@@ -5,9 +5,13 @@
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile name=""/>
 
-  <group name="Appearance">
+  <group name="General">
     <entry name="compactView" type="Bool">
       <label>If true it only shows a button for the application menu.</label>
+      <default>false</default>
+    </entry>
+    <entry name="filterByScreen" type="Bool">
+      <label>If true it only shows the app menu if the current active window is in the same screen with the plasmoid</label>
       <default>false</default>
     </entry>
   </group>
