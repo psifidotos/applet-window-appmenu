@@ -34,7 +34,7 @@ Item {
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
     // used from the ui
-    readonly property real centerFactor: 0.35
+    readonly property real centerFactor: 0.3
     readonly property int minimumWidth: 220
 
     ColumnLayout {
