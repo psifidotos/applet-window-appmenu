@@ -39,6 +39,7 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
     Q_OBJECT
 
     Q_PROPERTY(bool menuAvailable READ menuAvailable WRITE setMenuAvailable NOTIFY menuAvailableChanged)
+    Q_PROPERTY(bool visible READ visible NOTIFY visibleChanged)
 
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
@@ -58,6 +59,8 @@ public:
     bool menuAvailable() const;
     void setMenuAvailable(bool set);
 
+    bool visible() const;
+
 signals:
     void requestActivateIndex(int index);
 
@@ -66,17 +69,24 @@ protected:
 
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
+    void onWindowChanged(WId id);
+    void setVisible(bool visible);
     void update();
 
 signals:
     void menuAvailableChanged();
     void modelNeedsUpdate();
+    void visibleChanged();
 
 private:
     bool m_menuAvailable;
     bool m_updatePending = false;
+    bool m_visible = true;
 
+    //! current active window used
     WId m_currentWindowId = 0;
+    //! window that its menu initialization may be delayed
+    WId m_delayedMenuWindowId = 0;
 
     QPointer<QMenu> m_menu;
 

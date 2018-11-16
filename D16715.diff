@@ -1,0 +1,139 @@
+diff --git a/plugin/appmenumodel.h b/plugin/appmenumodel.h
+--- a/plugin/appmenumodel.h
++++ b/plugin/appmenumodel.h
+@@ -39,6 +39,7 @@
+     Q_OBJECT
+ 
+     Q_PROPERTY(bool menuAvailable READ menuAvailable WRITE setMenuAvailable NOTIFY menuAvailableChanged)
++    Q_PROPERTY(bool visible READ visible NOTIFY visibleChanged)
+ 
+ public:
+     explicit AppMenuModel(QObject *parent = nullptr);
+@@ -58,25 +59,34 @@
+     bool menuAvailable() const;
+     void setMenuAvailable(bool set);
+ 
++    bool visible() const;
++
+ signals:
+     void requestActivateIndex(int index);
+ 
+ protected:
+     bool nativeEventFilter(const QByteArray &eventType, void *message, long int *result) override;
+ 
+ private Q_SLOTS:
+     void onActiveWindowChanged(WId id);
++    void onWindowChanged(WId id);
++    void setVisible(bool visible);
+     void update();
+ 
+ signals:
+     void menuAvailableChanged();
+     void modelNeedsUpdate();
++    void visibleChanged();
+ 
+ private:
+     bool m_menuAvailable;
+     bool m_updatePending = false;
++    bool m_visible = true;
+ 
++    //! current active window used
+     WId m_currentWindowId = 0;
++    //! window that its menu initialization may be delayed
++    WId m_delayedMenuWindowId = 0;
+ 
+     QPointer<QMenu> m_menu;
+ 
+diff --git a/plugin/appmenumodel.cpp b/plugin/appmenumodel.cpp
+--- a/plugin/appmenumodel.cpp
++++ b/plugin/appmenumodel.cpp
+@@ -69,6 +69,11 @@
+               m_serviceWatcher(new QDBusServiceWatcher(this))
+ {
+     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppMenuModel::onActiveWindowChanged);
++    connect(KWindowSystem::self()
++            , static_cast<void (KWindowSystem::*)(WId)>(&KWindowSystem::windowChanged)
++            , this
++            , &AppMenuModel::onWindowChanged);
++
+     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {
+         if (!m_updatePending) {
+             m_updatePending = true;
+@@ -100,10 +105,24 @@
+ {
+     if (m_menuAvailable != set) {
+         m_menuAvailable = set;
++        setVisible(true);
+         emit menuAvailableChanged();
+     }
+ }
+ 
++bool AppMenuModel::visible() const
++{
++    return m_visible;
++}
++
++void AppMenuModel::setVisible(bool visible)
++{
++    if (m_visible != visible) {
++        m_visible = visible;
++        emit visibleChanged();
++    }
++}
++
+ int AppMenuModel::rowCount(const QModelIndex &parent) const
+ {
+     Q_UNUSED(parent);
+@@ -187,23 +206,27 @@
+             return;
+         }
+ 
++        m_currentWindowId = id;
++
+         WId transientId = info.transientFor();
+         // lok at transient windows first
+         while (transientId) {
+             if (updateMenuFromWindowIfHasMenu(transientId)) {
++                setVisible(true);
+                 return;
+             }
+             transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
+         }
+ 
+         if (updateMenuFromWindowIfHasMenu(id)) {
++            setVisible(true);
+             return;
+         }
+ 
+         // monitor whether an app menu becomes available later
+         // this can happen when an app starts, shows its window, and only later announces global menu (e.g. Firefox)
+         qApp->installNativeEventFilter(this);
+-        m_currentWindowId = id;
++        m_delayedMenuWindowId = id;
+ 
+         //no menu found, set it to unavailable
+         setMenuAvailable(false);
+@@ -213,6 +236,13 @@
+ 
+ }
+ 
++void AppMenuModel::onWindowChanged(WId id)
++{
++    if (m_currentWindowId == id) {
++        KWindowInfo info(id, NET::WMState);
++        setVisible(!info.isMinimized());
++    }
++}
+ 
+ QHash<int, QByteArray> AppMenuModel::roleNames() const
+ {
+@@ -321,7 +351,7 @@
+     const uint8_t type = e->response_type & ~0x80;
+     if (type == XCB_PROPERTY_NOTIFY) {
+         auto *event = reinterpret_cast<xcb_property_notify_event_t *>(e);
+-        if (event->window == m_currentWindowId) {
++        if (event->window == m_delayedMenuWindowId) {
+ 
+             auto serviceNameAtom = s_atoms.value(s_x11AppMenuServiceNamePropertyName);
+             auto objectPathAtom = s_atoms.value(s_x11AppMenuObjectPathPropertyName);
+

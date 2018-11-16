@@ -69,6 +69,11 @@ AppMenuModel::AppMenuModel(QObject *parent)
               m_serviceWatcher(new QDBusServiceWatcher(this))
 {
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppMenuModel::onActiveWindowChanged);
+    connect(KWindowSystem::self()
+            , static_cast<void (KWindowSystem::*)(WId)>(&KWindowSystem::windowChanged)
+            , this
+            , &AppMenuModel::onWindowChanged);
+
     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {
         if (!m_updatePending) {
             m_updatePending = true;
@@ -100,7 +105,21 @@ void AppMenuModel::setMenuAvailable(bool set)
 {
     if (m_menuAvailable != set) {
         m_menuAvailable = set;
+        setVisible(true);
         emit menuAvailableChanged();
+    }
+}
+
+bool AppMenuModel::visible() const
+{
+    return m_visible;
+}
+
+void AppMenuModel::setVisible(bool visible)
+{
+    if (m_visible != visible) {
+        m_visible = visible;
+        emit visibleChanged();
     }
 }
 
@@ -187,23 +206,27 @@ void AppMenuModel::onActiveWindowChanged(WId id)
             return;
         }
 
+        m_currentWindowId = id;
+
         WId transientId = info.transientFor();
         // lok at transient windows first
         while (transientId) {
             if (updateMenuFromWindowIfHasMenu(transientId)) {
+                setVisible(true);
                 return;
             }
             transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
         }
 
         if (updateMenuFromWindowIfHasMenu(id)) {
+            setVisible(true);
             return;
         }
 
         // monitor whether an app menu becomes available later
         // this can happen when an app starts, shows its window, and only later announces global menu (e.g. Firefox)
         qApp->installNativeEventFilter(this);
-        m_currentWindowId = id;
+        m_delayedMenuWindowId = id;
 
         //no menu found, set it to unavailable
         setMenuAvailable(false);
@@ -213,6 +236,13 @@ void AppMenuModel::onActiveWindowChanged(WId id)
 
 }
 
+void AppMenuModel::onWindowChanged(WId id)
+{
+    if (m_currentWindowId == id) {
+        KWindowInfo info(id, NET::WMState);
+        setVisible(!info.isMinimized());
+    }
+}
 
 QHash<int, QByteArray> AppMenuModel::roleNames() const
 {
@@ -321,7 +351,7 @@ bool AppMenuModel::nativeEventFilter(const QByteArray &eventType, void *message,
     const uint8_t type = e->response_type & ~0x80;
     if (type == XCB_PROPERTY_NOTIFY) {
         auto *event = reinterpret_cast<xcb_property_notify_event_t *>(e);
-        if (event->window == m_currentWindowId) {
+        if (event->window == m_delayedMenuWindowId) {
 
             auto serviceNameAtom = s_atoms.value(s_x11AppMenuServiceNamePropertyName);
             auto objectPathAtom = s_atoms.value(s_x11AppMenuObjectPathPropertyName);

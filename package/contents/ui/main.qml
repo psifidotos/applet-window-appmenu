@@ -116,7 +116,7 @@ Item {
 
         Repeater {
             id: buttonRepeater
-            model: appMenuModel
+            model: appMenuModel.visible ? appMenuModel : null
 
             Rectangle {
                 id: button
