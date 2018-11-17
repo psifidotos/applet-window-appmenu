@@ -101,6 +101,21 @@ AppMenuModel::AppMenuModel(QObject *parent)
 
 AppMenuModel::~AppMenuModel() = default;
 
+bool AppMenuModel::filterByActive() const
+{
+    return m_filterByActive;
+}
+
+void AppMenuModel::setfilterByActive(bool active)
+{
+    if (m_filterByActive == active) {
+        return;
+    }
+
+    m_filterByActive = active;
+    emit filterByActiveChanged();
+}
+
 bool AppMenuModel::menuAvailable() const
 {
     return m_menuAvailable;
@@ -233,9 +248,15 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         KWindowInfo info(id, NET::WMState | NET::WMWindowType, NET::WM2TransientFor);
 
         if (info.hasState(NET::SkipTaskbar) ||
-            info.windowType(NET::UtilityMask) == NET::Utility ||
-            info.windowType(NET::DesktopMask) == NET::Desktop) {
+            info.windowType(NET::UtilityMask) == NET::Utility) {
             return;
+        }
+
+        if (info.windowType(NET::DesktopMask) == NET::Desktop) {
+            if (filterByActive()) {
+                setVisible(false);
+                return;
+            }
         }
 
         m_currentWindowId = id;

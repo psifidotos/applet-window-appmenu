@@ -10,6 +10,10 @@
       <label>If true it only shows a button for the application menu.</label>
       <default>false</default>
     </entry>
+    <entry name="filterByActive" type="Bool">
+      <label>If true it only shows the app menu if the current window that provides its menu is also active</label>
+      <default>true</default>
+    </entry>
     <entry name="filterByScreen" type="Bool">
       <label>If true it only shows the app menu if the current active window is in the same screen with the plasmoid</label>
       <default>false</default>

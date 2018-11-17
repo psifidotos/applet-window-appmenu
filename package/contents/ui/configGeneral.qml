@@ -29,6 +29,7 @@ Item {
     id: configGeneral
 
     property alias cfg_compactView: compactViewRadioButton.checked
+    property alias cfg_filterByActive: activeChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
@@ -88,6 +89,13 @@ Item {
             Controls.CheckBox {
                 id: screenAwareChk
                 text: i18n("Show only menus from current screen")
+            }
+
+            Controls.Label{}
+
+            Controls.CheckBox {
+                id: activeChk
+                text: i18n("Show only menus from active applications")
             }
         }
 

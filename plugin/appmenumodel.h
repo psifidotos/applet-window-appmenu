@@ -42,6 +42,7 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
     Q_PROPERTY(bool menuAvailable READ menuAvailable WRITE setMenuAvailable NOTIFY menuAvailableChanged)
     Q_PROPERTY(bool visible READ visible NOTIFY visibleChanged)
 
+    Q_PROPERTY(bool filterByActive READ filterByActive WRITE setfilterByActive NOTIFY filterByActiveChanged)
     Q_PROPERTY(QRect screenGeometry READ screenGeometry WRITE setScreenGeometry NOTIFY screenGeometryChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
@@ -58,6 +59,9 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     void updateApplicationMenu(const QString &serviceName, const QString &menuObjectPath);
+
+    bool filterByActive() const;
+    void setfilterByActive(bool active);
 
     bool menuAvailable() const;
     void setMenuAvailable(bool set);
@@ -82,10 +86,12 @@ private Q_SLOTS:
 signals:
     void menuAvailableChanged();
     void modelNeedsUpdate();
+    void filterByActiveChanged();
     void visibleChanged();
     void screenGeometryChanged();
 
 private:
+    bool m_filterByActive = false;
     bool m_menuAvailable;
     bool m_updatePending = false;
     bool m_visible = true;
