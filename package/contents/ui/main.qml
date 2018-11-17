@@ -52,8 +52,15 @@ Item {
         Layout.fillHeight: !root.vertical
 
         // fake highlighted
-        color: menuOpened || globalButtonMouseArea.containsMouse ?
-                   (enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor) :'transparent'
+        color: {
+            if (menuOpened) {
+                return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
+            } else if (globalButtonMouseArea.containsMouse) {
+                return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
+            } else {
+                return 'transparent';
+            }
+        }
 
         radius: 2
 
@@ -176,8 +183,15 @@ Item {
                 visible: buttonLbl.text !== ""
 
                 // fake highlighted
-                color: menuOpened || buttonMouseArea.containsMouse ?
-                           (enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor) :'transparent'
+                color: {
+                    if (menuOpened) {
+                        return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
+                    } else if (buttonMouseArea.containsMouse) {
+                        return enforceLattePalette ? latteBridge.palette.buttonHoverColor : theme.buttonHoverColor
+                    } else {
+                        return 'transparent';
+                    }
+                }
 
                 radius: 2
 
@@ -209,18 +223,12 @@ Item {
                     }
 
                     color: {
-                        if (menuOpened || buttonMouseArea.containsMouse) {
-                            if (enforceLattePalette) {
-                                return latteBridge.palette.highlightedTextColor;
-                            } else {
-                                return theme.highlightedTextColor;
-                            }
+                        if (menuOpened) {
+                            return enforceLattePalette ? latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
+                        } else if (buttonMouseArea.containsMouse) {
+                            return enforceLattePalette ? latteBridge.palette.buttonTextColor : theme.buttonTextColor
                         } else {
-                            if (enforceLattePalette) {
-                                return latteBridge.palette.textColor;
-                            } else {
-                                return theme.textColor;
-                            }
+                            return enforceLattePalette ? latteBridge.palette.textColor : theme.textColor;
                         }
                     }
                 }
