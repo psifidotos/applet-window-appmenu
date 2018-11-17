@@ -42,7 +42,8 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
     Q_PROPERTY(bool menuAvailable READ menuAvailable WRITE setMenuAvailable NOTIFY menuAvailableChanged)
     Q_PROPERTY(bool visible READ visible NOTIFY visibleChanged)
 
-    Q_PROPERTY(bool filterByActive READ filterByActive WRITE setfilterByActive NOTIFY filterByActiveChanged)
+    Q_PROPERTY(bool filterByActive READ filterByActive WRITE setFilterByActive NOTIFY filterByActiveChanged)
+    Q_PROPERTY(bool filterChildren READ filterChildren WRITE setFilterChildren NOTIFY filterChildrenChanged)
     Q_PROPERTY(QRect screenGeometry READ screenGeometry WRITE setScreenGeometry NOTIFY screenGeometryChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
@@ -61,7 +62,10 @@ public:
     void updateApplicationMenu(const QString &serviceName, const QString &menuObjectPath);
 
     bool filterByActive() const;
-    void setfilterByActive(bool active);
+    void setFilterByActive(bool active);
+
+    bool filterChildren() const;
+    void setFilterChildren(bool hideChildren);
 
     bool menuAvailable() const;
     void setMenuAvailable(bool set);
@@ -89,11 +93,13 @@ signals:
     void menuAvailableChanged();
     void modelNeedsUpdate();
     void filterByActiveChanged();
+    void filterChildrenChanged();
     void visibleChanged();
     void screenGeometryChanged();
 
 private:
     bool m_filterByActive = false;
+    bool m_filterChildren = false;
     bool m_menuAvailable;
     bool m_updatePending = false;
     bool m_visible = true;

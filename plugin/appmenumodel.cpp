@@ -106,7 +106,7 @@ bool AppMenuModel::filterByActive() const
     return m_filterByActive;
 }
 
-void AppMenuModel::setfilterByActive(bool active)
+void AppMenuModel::setFilterByActive(bool active)
 {
     if (m_filterByActive == active) {
         return;
@@ -115,6 +115,22 @@ void AppMenuModel::setfilterByActive(bool active)
     m_filterByActive = active;
     emit filterByActiveChanged();
 }
+
+bool AppMenuModel::filterChildren() const
+{
+    return m_filterChildren;
+}
+
+void AppMenuModel::setFilterChildren(bool hideChildren)
+{
+    if (m_filterChildren == hideChildren) {
+        return;
+    }
+
+    m_filterChildren = hideChildren;
+    emit filterChildrenChanged();
+}
+
 
 bool AppMenuModel::menuAvailable() const
 {
@@ -252,7 +268,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
             info.windowType(NET::DesktopMask) == NET::Desktop) {
 
             //! hide when the windows or their transiet(s) do not have a menu
-            if (filterByActive() && visible()) {
+            if (filterByActive()) {
                 WId transientId = info.transientFor();
 
                 while (transientId) {
@@ -274,16 +290,18 @@ void AppMenuModel::onActiveWindowChanged(WId id)
 
         m_currentWindowId = id;
 
-        WId transientId = info.transientFor();
+        if (!filterChildren()) {
+            WId transientId = info.transientFor();
 
-        // lok at transient windows first
-        while (transientId) {
-            if (updateMenuFromWindowIfHasMenu(transientId)) {
-                filterWindow(info);
-                return;
+            // lok at transient windows first
+            while (transientId) {
+                if (updateMenuFromWindowIfHasMenu(transientId)) {
+                    filterWindow(info);
+                    return;
+                }
+
+                transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
             }
-
-            transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
         }
 
         if (updateMenuFromWindowIfHasMenu(id)) {

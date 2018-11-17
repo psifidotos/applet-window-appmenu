@@ -30,6 +30,7 @@ Item {
 
     property alias cfg_compactView: compactViewRadioButton.checked
     property alias cfg_filterByActive: activeChk.checked
+    property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
@@ -96,6 +97,13 @@ Item {
             Controls.CheckBox {
                 id: activeChk
                 text: i18n("Show only menus from active applications")
+            }
+
+            Controls.Label{}
+
+            Controls.CheckBox {
+                id: childrenChk
+                text: i18n("Show only menus from main window")
             }
         }
 
