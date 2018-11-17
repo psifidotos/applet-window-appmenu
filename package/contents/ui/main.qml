@@ -58,6 +58,7 @@ Item {
         onLatteBridgeChanged: {
             if (latteBridge) {
                 latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
+                buttonGrid.latteBridge = latteBridge;
             }
         }
 
@@ -160,6 +161,7 @@ Item {
         onLatteBridgeChanged: {
             if (latteBridge) {
                 latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
+                globalButtonItem.latteBridge = latteBridge;
             }
         }
 
