@@ -113,8 +113,6 @@ Item {
 
     Plasmoid.fullRepresentation: GridLayout {
         id: buttonGrid
-        rowSpacing: 0
-        columnSpacing: 0
 
         Plasmoid.status: {
             if (menuAvailable && plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
