@@ -57,7 +57,7 @@ Item {
         color: {
             if (menuOpened) {
                 return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
-            } else if (globalButtonMouseArea.containsMouse) {
+            } else if (buttonMouseArea.containsMouse) {
                 return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
             } else {
                 return 'transparent';
@@ -113,6 +113,8 @@ Item {
 
     Plasmoid.fullRepresentation: GridLayout {
         id: buttonGrid
+        rowSpacing: 0
+        columnSpacing: 0
 
         Plasmoid.status: {
             if (menuAvailable && plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
@@ -189,7 +191,7 @@ Item {
                     if (menuOpened) {
                         return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
                     } else if (buttonMouseArea.containsMouse) {
-                        return enforceLattePalette ? latteBridge.palette.buttonHoverColor : theme.buttonHoverColor
+                        return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
                     } else {
                         return 'transparent';
                     }
