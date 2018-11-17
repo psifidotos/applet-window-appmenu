@@ -245,7 +245,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
             return false;
         };
 
-        KWindowInfo info(id, NET::WMState | NET::WMWindowType, NET::WM2TransientFor);
+        KWindowInfo info(id, NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
 
         if (info.hasState(NET::SkipTaskbar) ||
             info.windowType(NET::UtilityMask) == NET::Utility ||
@@ -279,7 +279,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         // lok at transient windows first
         while (transientId) {
             if (updateMenuFromWindowIfHasMenu(transientId)) {
-                onWindowChanged(m_currentWindowId);
+                filterWindow(info);
                 return;
             }
 
@@ -287,7 +287,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         }
 
         if (updateMenuFromWindowIfHasMenu(id)) {
-            onWindowChanged(m_currentWindowId);
+            filterWindow(info);
             return;
         }
 
@@ -309,7 +309,13 @@ void AppMenuModel::onWindowChanged(WId id)
 {
     if (m_currentWindowId == id) {
         KWindowInfo info(id, NET::WMState | NET::WMGeometry);
+        filterWindow(info);
+    }
+}
 
+void AppMenuModel::filterWindow(KWindowInfo &info)
+{
+    if (m_currentWindowId == info.win()) {
         const bool contained = m_screenGeometry.isNull() || m_screenGeometry.contains(info.geometry().center());
 
         setVisible(!info.isMinimized() && contained);

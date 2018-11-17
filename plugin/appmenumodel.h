@@ -80,6 +80,8 @@ protected:
 private Q_SLOTS:
     void onActiveWindowChanged(WId id);
     void onWindowChanged(WId id);
+    void filterWindow(KWindowInfo &info);
+
     void setVisible(bool visible);
     void update();
 
