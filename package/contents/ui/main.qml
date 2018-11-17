@@ -51,7 +51,14 @@ Item {
         Layout.fillWidth: root.vertical
         Layout.fillHeight: !root.vertical
 
+        readonly property int buttonIndex: 0
         readonly property int shadow: 3
+
+        signal clicked;
+
+        onClicked: {
+            plasmoid.nativeInterface.trigger(this, buttonIndex);
+        }
 
         //BEGIN Latte Dock Communicator for CompactRepresentation
         property QtObject latteBridge: null
@@ -70,8 +77,6 @@ Item {
             anchors.fill: parent
             anchors.margins: 1
 
-            readonly property int buttonIndex: 0
-
             // fake highlighted
             color: {
                 if (menuOpened) {
@@ -87,17 +92,13 @@ Item {
 
             property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
 
-            signal clicked;
+
 
             layer.enabled: menuOpened || globalButtonMouseArea.containsMouse
             layer.effect: DropShadow{
                 radius: globalButtonItem.shadow
                 samples: 2 * radius
                 color: "#ff151515"
-            }
-
-            onClicked: {
-                plasmoid.nativeInterface.trigger(this, buttonIndex);
             }
 
             PlasmaCore.IconItem{
@@ -121,18 +122,17 @@ Item {
                     }
                 }
             }
-
-            MouseArea{
-                id: globalButtonMouseArea
-                anchors.fill: parent
-                hoverEnabled: true
-
-                onPressed: {
-                    buttonGlobal.clicked();
-                }
-            }
         }
 
+        MouseArea{
+            id: globalButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+
+            onPressed: {
+                globalButtonItem.clicked();
+            }
+        }
     }
 
     Plasmoid.fullRepresentation: GridLayout {
@@ -175,6 +175,7 @@ Item {
             plasmoid.nativeInterface.requestActivateIndex.connect(function (index) {
                 var idx = Math.max(0, Math.min(buttonRepeater.count - 1, index))
                 var button = buttonRepeater.itemAt(index)
+
                 if (button) {
                     button.clicked()
                 }
@@ -207,13 +208,19 @@ Item {
 
                 visible: buttonLbl.text !== ""
 
+                readonly property int buttonIndex: index
                 readonly property int shadow: 3
+
+                signal clicked;
+
+                onClicked: {
+                    plasmoid.nativeInterface.trigger(this, index);
+                }
 
                 Rectangle {
                     id: button
                     anchors.fill: parent
                     anchors.margins: 1
-                    readonly property int buttonIndex: index
 
                     // fake highlighted
                     color: {
@@ -230,17 +237,11 @@ Item {
 
                     property bool menuOpened: plasmoid.nativeInterface.currentIndex === index
 
-                    signal clicked;
-
                     layer.enabled: menuOpened || buttonMouseArea.containsMouse
                     layer.effect: DropShadow{
                         radius: buttonItem.shadow
                         samples: 2 * radius
                         color: "#ff151515"
-                    }
-
-                    onClicked: {
-                        plasmoid.nativeInterface.trigger(this, index);
                     }
 
                     PlasmaComponents.Label{
@@ -282,7 +283,7 @@ Item {
                         hoverEnabled: true
 
                         onPressed: {
-                            button.clicked();
+                            buttonItem.clicked();
                         }
                     }
                 }
