@@ -3,7 +3,7 @@
 This is a Plasma 5 applet that shows the current window appmenu in your panels. This plasmoid is coming from [Latte land](https://phabricator.kde.org/source/latte-dock/repository/master/) but it can also support Plasma panels.
 
 <p align="center">
-<img src="https://im6.ezgif.com/tmp/ezgif-6-fd4a32f1fb47.gif" width="580"><br/>
+<img src="https://i.imgur.com/T0sLWav.gif" width="580"><br/>
 <i>hide menu when active window is minimized</i>
 </p>
 
