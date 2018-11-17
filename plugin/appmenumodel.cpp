@@ -125,7 +125,7 @@ void AppMenuModel::setMenuAvailable(bool set)
 {
     if (m_menuAvailable != set) {
         m_menuAvailable = set;
-        setVisible(true);
+        onWindowChanged(m_currentWindowId);
         emit menuAvailableChanged();
     }
 }
@@ -248,15 +248,28 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         KWindowInfo info(id, NET::WMState | NET::WMWindowType, NET::WM2TransientFor);
 
         if (info.hasState(NET::SkipTaskbar) ||
-            info.windowType(NET::UtilityMask) == NET::Utility) {
-            return;
-        }
+            info.windowType(NET::UtilityMask) == NET::Utility ||
+            info.windowType(NET::DesktopMask) == NET::Desktop) {
 
-        if (info.windowType(NET::DesktopMask) == NET::Desktop) {
+            //! hide when the windows or their transiet(s) do not have a menu
+            if (filterByActive() && visible()) {
+                WId transientId = info.transientFor();
+
+                while (transientId) {
+                    if (transientId == m_currentWindowId) {
+                        onWindowChanged(m_currentWindowId);
+                        return;
+                    }
+
+                    transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
+                }
+            }
+
             if (filterByActive()) {
                 setVisible(false);
-                return;
             }
+
+            return;
         }
 
         m_currentWindowId = id;
@@ -266,7 +279,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         // lok at transient windows first
         while (transientId) {
             if (updateMenuFromWindowIfHasMenu(transientId)) {
-                setVisible(true);
+                onWindowChanged(m_currentWindowId);
                 return;
             }
 
@@ -274,7 +287,7 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         }
 
         if (updateMenuFromWindowIfHasMenu(id)) {
-            setVisible(true);
+            onWindowChanged(m_currentWindowId);
             return;
         }
 
