@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.4
 
@@ -42,17 +43,63 @@ Item {
 
     Plasmoid.preferredRepresentation: (plasmoid.configuration.compactView || vertical) ? Plasmoid.compactRepresentation : Plasmoid.fullRepresentation
 
-    Plasmoid.compactRepresentation: PlasmaComponents.ToolButton {
-        readonly property int fakeIndex: 0
-        Layout.fillWidth: false
-        Layout.fillHeight: false
-        Layout.minimumWidth: implicitWidth
-        Layout.maximumWidth: implicitWidth
-        enabled:  menuAvailable
-        checkable: menuAvailable && plasmoid.nativeInterface.currentIndex === fakeIndex
-        checked: checkable
-        iconSource: i18n("application-menu")
-        onClicked: plasmoid.nativeInterface.trigger(this, 0);
+    Plasmoid.compactRepresentation: Rectangle {
+        id: buttonGlobal
+        readonly property int buttonIndex: 0
+
+        Layout.preferredWidth: globalMenuIcon.width + 2 * units.smallSpacing
+        Layout.fillWidth: root.vertical
+        Layout.fillHeight: !root.vertical
+
+        // fake highlighted
+        color: menuOpened || globalButtonMouseArea.containsMouse ?
+                   (enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor) :'transparent'
+
+        radius: 2
+
+        property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
+
+        signal clicked;
+
+        onClicked: {
+            plasmoid.nativeInterface.trigger(this, buttonIndex);
+        }
+
+        PlasmaCore.IconItem{
+            id: globalMenuIcon
+            Layout.fillWidth: root.vertical
+            Layout.fillHeight: !root.vertical
+            anchors.centerIn: parent
+            enabled:  menuAvailable
+            source: "application-menu"
+
+            layer.enabled: enforceLattePalette
+            layer.effect: ColorOverlay{
+                color: menuOpened || globalButtonMouseArea.containsMouse ?
+                           latteBridge.palette.highlightedTextColor : latteBridge.palette.textColor
+            }
+        }
+
+        MouseArea{
+            id: globalButtonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+
+            onPressed: {
+                buttonGlobal.clicked();
+            }
+        }
+
+        //BEGIN Latte Dock Communicator for CompactRepresentation
+        property QtObject latteBridge: null
+        onLatteBridgeChanged: {
+            if (latteBridge) {
+                latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
+            }
+        }
+
+        readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
+        //END  Latte Dock Communicator
     }
 
     Plasmoid.fullRepresentation: GridLayout {
@@ -76,7 +123,7 @@ Item {
         rowSpacing: units.smallSpacing
         columnSpacing: units.smallSpacing
 
-        //BEGIN Latte Dock Communicator
+        //BEGIN Latte Dock Communicator for FullRepresentation
         property QtObject latteBridge: null
         onLatteBridgeChanged: {
             if (latteBridge) {
@@ -185,7 +232,7 @@ Item {
                     hoverEnabled: true
 
                     onPressed: {
-                       button.clicked();
+                        button.clicked();
                     }
                 }
             }
