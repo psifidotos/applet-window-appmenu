@@ -28,6 +28,8 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 
 import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
 
+import "../code/util.js" as Util
+
 Item {
     id: root
 
@@ -208,18 +210,20 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
 
+                    textFormat: Text.StyledText
                     text: {
                         var text = activeMenu;
 
                         var alt = keystateSource.data.Alt;
                         if (!alt || !alt.Pressed) {
+
                             // StyleHelpers.removeMnemonics
                             text = text.replace(/([^&]*)&(.)([^&]*)/g, function (match, p1, p2, p3) {
                                 return p1.concat(p2, p3);
                             });
                         }
 
-                        return text;
+                        return Util.stylizeEscapedMnemonics(Util.toHtmlEscaped(text));
                     }
 
                     color: {
