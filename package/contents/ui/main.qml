@@ -191,8 +191,10 @@ Item {
 
                 PlasmaComponents.Label{
                     id: buttonLbl
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    verticalAlignment: Text.AlignVCenter
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.verticalCenter: parent.verticalCenter
 
                     text: {
                         var text = activeMenu;
