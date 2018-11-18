@@ -39,6 +39,17 @@ Item {
 
     readonly property bool kcmAuthorized: KCMShell.authorize(["style.desktop"]).length > 0
 
+    //BEGIN Latte Dock Communicator for CompactRepresentation
+    property QtObject latteBridge: null
+    onLatteBridgeChanged: {
+        if (latteBridge) {
+            latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
+        }
+    }
+
+    readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
+    //END  Latte Dock Communicator
+
     onViewChanged: {
         plasmoid.nativeInterface.view = view
     }
@@ -61,12 +72,9 @@ Item {
         property QtObject latteBridge: null
         onLatteBridgeChanged: {
             if (latteBridge) {
-                latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
-                buttonGrid.latteBridge = latteBridge;
+                root.latteBridge = latteBridge;
             }
         }
-
-        readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
         //END  Latte Dock Communicator
     }
 
@@ -91,16 +99,13 @@ Item {
         rowSpacing: units.smallSpacing
         columnSpacing: units.smallSpacing
 
-        //BEGIN Latte Dock Communicator for FullRepresentation
+        //BEGIN Latte Dock Communicator for CompactRepresentation
         property QtObject latteBridge: null
         onLatteBridgeChanged: {
             if (latteBridge) {
-                latteBridge.actions.setProperty(plasmoid.id, "disableLatteSideColoring", true);
-                globalButtonItem.latteBridge = latteBridge;
+                root.latteBridge = latteBridge;
             }
         }
-
-        readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
         //END  Latte Dock Communicator
 
         Component.onCompleted: {

@@ -54,9 +54,9 @@ Item {
         // fake highlighted
         color: {
             if (menuOpened) {
-                return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
+                return enforceLattePalette ? root.latteBridge.palette.highlightColor : theme.highlightColor
             } else if (buttonMouseArea.containsMouse) {
-                return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
+                return enforceLattePalette ? root.latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
             } else {
                 return 'transparent';
             }
@@ -115,11 +115,11 @@ Item {
 
             color: {
                 if (buttonItem.menuOpened) {
-                    return enforceLattePalette ? latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
+                    return enforceLattePalette ? root.latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
                 } else if (buttonMouseArea.containsMouse) {
-                    return enforceLattePalette ? latteBridge.palette.buttonTextColor : theme.buttonTextColor
+                    return enforceLattePalette ? root.latteBridge.palette.buttonTextColor : theme.buttonTextColor
                 } else {
-                    return enforceLattePalette ? latteBridge.palette.textColor : theme.textColor;
+                    return enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;
                 }
             }
         }
@@ -137,11 +137,11 @@ Item {
             layer.effect: ColorOverlay{
                 color: {
                     if (buttonItem.menuOpened) {
-                        return enforceLattePalette ? latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
+                        return enforceLattePalette ? root.latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
                     } else if (buttonMouseArea.containsMouse) {
-                        return enforceLattePalette ? latteBridge.palette.buttonTextColor : theme.buttonTextColor
+                        return enforceLattePalette ? root.latteBridge.palette.buttonTextColor : theme.buttonTextColor
                     } else {
-                        return enforceLattePalette ? latteBridge.palette.textColor : theme.textColor;
+                        return enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;
                     }
                 }
             }
