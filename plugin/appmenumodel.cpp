@@ -269,15 +269,16 @@ void AppMenuModel::onActiveWindowChanged(WId id)
 
             //! hide when the windows or their transiet(s) do not have a menu
             if (filterByActive()) {
-                WId transientId = info.transientFor();
 
-                while (transientId) {
-                    if (transientId == m_currentWindowId) {
-                        onWindowChanged(m_currentWindowId);
+                KWindowInfo transientInfo = KWindowInfo(info.transientFor(), NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
+
+                while (transientInfo.win()) {
+                    if (transientInfo.win() == m_currentWindowId) {
+                        filterWindow(info);
                         return;
                     }
 
-                    transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
+                    transientInfo = KWindowInfo(transientInfo.transientFor(), NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
                 }
             }
 
@@ -291,16 +292,17 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         m_currentWindowId = id;
 
         if (!filterChildren()) {
-            WId transientId = info.transientFor();
 
-            // lok at transient windows first
-            while (transientId) {
-                if (updateMenuFromWindowIfHasMenu(transientId)) {
+            KWindowInfo transientInfo = KWindowInfo(info.transientFor(), NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
+
+            // look at transient windows first
+            while (transientInfo.win()) {
+                if (updateMenuFromWindowIfHasMenu(transientInfo.win())) {
                     filterWindow(info);
                     return;
                 }
 
-                transientId = KWindowInfo(transientId, nullptr, NET::WM2TransientFor).transientFor();
+                transientInfo = KWindowInfo(transientInfo.transientFor(), NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
             }
         }
 
