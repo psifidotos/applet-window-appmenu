@@ -82,6 +82,7 @@ Item {
         Layout.fillHeight: true
         Layout.minimumWidth: gridFlickable.width
         Layout.preferredWidth: gridFlickable.width
+        Layout.maximumWidth: buttonGrid.width
 
         //BEGIN Latte Dock Communicator for CompactRepresentation
         property QtObject latteBridge: null
