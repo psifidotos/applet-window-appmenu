@@ -1,7 +1,5 @@
 /*
- * Copyright 2013  Heena Mahour <heena393@gmail.com>
- * Copyright 2013 Sebastian Kügler <sebas@kde.org>
- * Copyright 2016 Kai Uwe Broulik <kde@privat.broulik.de>
+ * Copyright 2018 Michail Vourlakos <mvourlakos@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,8 +24,6 @@ import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
 
-import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
-
 import "../code/util.js" as Util
 
 Item {
@@ -39,10 +35,12 @@ Item {
 
     readonly property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
     readonly property int shadow: 3
-    readonly property int implicitWidth: itemLoader.item.implicitWidth + 2*units.smallSpacing + 2*shadow
-    readonly property int implicitHeight: itemLoader.item.implicitHeight + 2*units.smallSpacing + 2*shadow
+    readonly property int implicitWidth: itemLoader.item ? itemLoader.item.implicitWidth + 2*units.smallSpacing + 2*shadow : 0
+    readonly property int implicitHeight: itemLoader.item ? itemLoader.item.implicitHeight + 2*units.smallSpacing + 2*shadow : 0
 
     signal clicked;
+    signal scrolledUp(int step);
+    signal scrolledDown(int step);
 
     Rectangle {
         id: button
@@ -87,6 +85,16 @@ Item {
 
         onPressed: {
             buttonItem.clicked();
+        }
+
+        onWheel: {
+            var angle = wheel.angleDelta.y / 8;
+
+            if (angle>12) {
+                buttonItem.scrolledUp(buttonItem.implicitWidth);
+            } else if (angle<-12) {
+                buttonItem.scrolledDown(buttonItem.implicitWidth);
+            }
         }
     }
 

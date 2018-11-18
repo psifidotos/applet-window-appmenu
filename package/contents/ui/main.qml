@@ -28,8 +28,6 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 
 import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
 
-import "../code/util.js" as Util
-
 Item {
     id: root
 
@@ -78,8 +76,21 @@ Item {
         //END  Latte Dock Communicator
     }
 
-    Plasmoid.fullRepresentation: GridLayout {
-        id: buttonGrid
+    Plasmoid.fullRepresentation: Item {
+        id: fullLayout
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumWidth: gridFlickable.width
+        Layout.preferredWidth: gridFlickable.width
+
+        //BEGIN Latte Dock Communicator for CompactRepresentation
+        property QtObject latteBridge: null
+        onLatteBridgeChanged: {
+            if (latteBridge) {
+                root.latteBridge = latteBridge;
+            }
+        }
+        //END  Latte Dock Communicator
 
         Plasmoid.status: {
             if (menuAvailable && plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
@@ -91,22 +102,6 @@ Item {
                 return PlasmaCore.Types.PassiveStatus;
             }
         }
-
-        Layout.minimumWidth: implicitWidth
-        Layout.minimumHeight: implicitHeight
-
-        flow: root.vertical ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        rowSpacing: units.smallSpacing
-        columnSpacing: units.smallSpacing
-
-        //BEGIN Latte Dock Communicator for CompactRepresentation
-        property QtObject latteBridge: null
-        onLatteBridgeChanged: {
-            if (latteBridge) {
-                root.latteBridge = latteBridge;
-            }
-        }
-        //END  Latte Dock Communicator
 
         Component.onCompleted: {
             plasmoid.nativeInterface.buttonGrid = buttonGrid
@@ -136,26 +131,63 @@ Item {
             connectedSources: ["Alt"]
         }
 
-        Repeater {
-            id: buttonRepeater
-            model: appMenuModel.visible ? appMenuModel : null
+        MenuFlickable{
+            id: gridFlickable
+            width: parent.width < contentWidth ? parent.width : contentWidth
+            height: parent.height
+            contentWidth: buttonGrid.width
+            contentHeight: buttonGrid.height
 
-            PaintedToolButton{
-                id:menuItem
+            GridLayout{
+                id: buttonGrid
 
-                Layout.preferredWidth: implicitWidth
-                Layout.fillWidth: root.vertical
-                Layout.fillHeight: !root.vertical
+                flow: GridLayout.LeftToRight
+                rowSpacing: units.smallSpacing
+                columnSpacing: units.smallSpacing
 
-                visible: activeMenu !== ""
+                Repeater {
+                    id: buttonRepeater
+                    model: appMenuModel.visible ? appMenuModel : null
 
-                buttonIndex: index
-                text: activeMenu
+                    PaintedToolButton{
+                        id:menuItem
 
-                onClicked: {
-                    plasmoid.nativeInterface.trigger(this, index);
+                        Layout.minimumWidth: implicitWidth
+                        Layout.preferredWidth: Layout.minimumWidth
+
+                        Layout.minimumHeight: fullLayout.height
+                        Layout.preferredHeight: Layout.minimumHeight
+
+                        visible: activeMenu !== ""
+
+                        buttonIndex: index
+                        text: activeMenu
+
+                        onClicked: {
+                            plasmoid.nativeInterface.trigger(this, index);
+                        }
+
+                        onScrolledUp: {
+                            if (gridFlickable.contentsExceed) {
+                                gridFlickable.increaseX(step);
+                            }
+                        }
+
+                        onScrolledDown: {
+                            if (gridFlickable.contentsExceed) {
+                                gridFlickable.decreaseX(step);
+                            }
+                        }
+                    }
                 }
             }
+        } //end of flickable
+
+        FlickableIndicators{
+            anchors.fill: parent
+
+            leftIndicatorOpacity: gridFlickable.contentX / gridFlickable.contentsExtraSpace;
+            rightIndicatorOpacity: (gridFlickable.contentsExtraSpace - gridFlickable.contentX) / gridFlickable.contentsExtraSpace
         }
     }
 
