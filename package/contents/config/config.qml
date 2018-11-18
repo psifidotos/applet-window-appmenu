@@ -27,6 +27,6 @@ ConfigModel {
     ConfigCategory {
          name: i18n("General")
          icon: "plasma"
-         source: "configGeneral.qml"
+         source: "config/ConfigGeneral.qml"
     }
 }
