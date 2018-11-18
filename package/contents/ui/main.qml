@@ -45,6 +45,7 @@ Item {
         }
     }
 
+    readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
     //END  Latte Dock Communicator
 
@@ -80,8 +81,8 @@ Item {
         id: fullLayout
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumWidth: gridFlickable.width
-        Layout.preferredWidth: gridFlickable.width
+        Layout.minimumWidth: latteInEditMode ? buttonGrid.width : gridFlickable.width
+        Layout.preferredWidth: latteInEditMode ? buttonGrid.width : gridFlickable.width
         Layout.maximumWidth: buttonGrid.width
 
         //BEGIN Latte Dock Communicator for CompactRepresentation
@@ -134,7 +135,7 @@ Item {
 
         MenuFlickable{
             id: gridFlickable
-            width: parent.width < contentWidth ? parent.width : contentWidth
+            width: parent.width < contentWidth && !latteInEditMode ? parent.width : contentWidth
             height: parent.height
             contentWidth: buttonGrid.width
             contentHeight: buttonGrid.height
@@ -148,7 +149,7 @@ Item {
 
                 Repeater {
                     id: buttonRepeater
-                    model: appMenuModel.visible ? appMenuModel : null
+                    model: appMenuModel.visible || latteInEditMode ? appMenuModel : null
 
                     PaintedToolButton{
                         id:menuItem
