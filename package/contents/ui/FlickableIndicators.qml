@@ -30,35 +30,37 @@ Item {
     property real leftIndicatorOpacity: 0
     property real rightIndicatorOpacity: 0
 
-    readonly property int shadow: 20
+    readonly property int shadow: 24
 
     Rectangle {
-        width: layout.shadow
+        width: 2 * layout.shadow
         height: parent.height
         anchors.right: parent.left
         anchors.verticalCenter: parent.verticalCenter
+        color: enforceLattePalette ? root.latteBridge.palette.backgroundColor : theme.backgroundColor
         opacity: leftIndicatorOpacity
 
         layer.enabled: opacity > 0
         layer.effect: DropShadow{
             radius: layout.shadow
             samples: 2 * radius
-            color: "#ff050505"
+            color: enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor
         }
     }
 
     Rectangle {
-        width: 24
+        width: 2 * layout.shadow
         height: parent.height
         anchors.left: parent.right
         anchors.verticalCenter: parent.verticalCenter
+        color: enforceLattePalette ? root.latteBridge.palette.backgroundColor : theme.backgroundColor
         opacity: rightIndicatorOpacity
 
         layer.enabled: opacity > 0
         layer.effect: DropShadow{
             radius: layout.shadow
             samples: 2 * radius
-            color: "#ff050505"
+            color: enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor
         }
     }
 }
