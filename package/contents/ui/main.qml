@@ -45,16 +45,13 @@ Item {
 
     Plasmoid.preferredRepresentation: (plasmoid.configuration.compactView || vertical) ? Plasmoid.compactRepresentation : Plasmoid.fullRepresentation
 
-    Plasmoid.compactRepresentation: Item {
-        id: globalButtonItem
-        Layout.preferredWidth: globalMenuIcon.width + 2 * units.smallSpacing + 2*shadow
+    Plasmoid.compactRepresentation: PaintedToolButton {
+        Layout.preferredWidth: implicitWidth
         Layout.fillWidth: root.vertical
         Layout.fillHeight: !root.vertical
 
-        readonly property int buttonIndex: 0
-        readonly property int shadow: 3
-
-        signal clicked;
+        buttonIndex: 0
+        icon: "application-menu"
 
         onClicked: {
             plasmoid.nativeInterface.trigger(this, buttonIndex);
@@ -71,68 +68,6 @@ Item {
 
         readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
         //END  Latte Dock Communicator
-
-        Rectangle {
-            id: buttonGlobal
-            anchors.fill: parent
-            anchors.margins: 1
-
-            // fake highlighted
-            color: {
-                if (menuOpened) {
-                    return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
-                } else if (globalButtonMouseArea.containsMouse) {
-                    return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
-                } else {
-                    return 'transparent';
-                }
-            }
-
-            radius: 2
-
-            property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
-
-
-
-            layer.enabled: menuOpened || globalButtonMouseArea.containsMouse
-            layer.effect: DropShadow{
-                radius: globalButtonItem.shadow
-                samples: 2 * radius
-                color: "#ff151515"
-            }
-
-            PlasmaCore.IconItem{
-                id: globalMenuIcon
-                Layout.fillWidth: root.vertical
-                Layout.fillHeight: !root.vertical
-                anchors.centerIn: parent
-                enabled:  menuAvailable
-                source: "application-menu"
-
-                layer.enabled: enforceLattePalette
-                layer.effect: ColorOverlay{
-                    color: {
-                        if (buttonGlobal.menuOpened) {
-                            return enforceLattePalette ? latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
-                        } else if (globalButtonMouseArea.containsMouse) {
-                            return enforceLattePalette ? latteBridge.palette.buttonTextColor : theme.buttonTextColor
-                        } else {
-                            return enforceLattePalette ? latteBridge.palette.textColor : theme.textColor;
-                        }
-                    }
-                }
-            }
-        }
-
-        MouseArea{
-            id: globalButtonMouseArea
-            anchors.fill: parent
-            hoverEnabled: true
-
-            onPressed: {
-                globalButtonItem.clicked();
-            }
-        }
     }
 
     Plasmoid.fullRepresentation: GridLayout {
@@ -200,92 +135,20 @@ Item {
             id: buttonRepeater
             model: appMenuModel.visible ? appMenuModel : null
 
-            Item{
-                id: buttonItem
-                Layout.preferredWidth: buttonLbl.width + 2 * units.smallSpacing + 2 * shadow
+            PaintedToolButton{
+                id:menuItem
+
+                Layout.preferredWidth: implicitWidth
                 Layout.fillWidth: root.vertical
                 Layout.fillHeight: !root.vertical
 
-                visible: buttonLbl.text !== ""
+                visible: activeMenu !== ""
 
-                readonly property int buttonIndex: index
-                readonly property int shadow: 3
-
-                signal clicked;
+                buttonIndex: index
+                text: activeMenu
 
                 onClicked: {
                     plasmoid.nativeInterface.trigger(this, index);
-                }
-
-                Rectangle {
-                    id: button
-                    anchors.fill: parent
-                    anchors.margins: 1
-
-                    // fake highlighted
-                    color: {
-                        if (menuOpened) {
-                            return enforceLattePalette ? latteBridge.palette.highlightColor : theme.highlightColor
-                        } else if (buttonMouseArea.containsMouse) {
-                            return enforceLattePalette ? latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
-                        } else {
-                            return 'transparent';
-                        }
-                    }
-
-                    radius: 3
-
-                    property bool menuOpened: plasmoid.nativeInterface.currentIndex === index
-
-                    layer.enabled: menuOpened || buttonMouseArea.containsMouse
-                    layer.effect: DropShadow{
-                        radius: buttonItem.shadow
-                        samples: 2 * radius
-                        color: "#ff151515"
-                    }
-
-                    PlasmaComponents.Label{
-                        id: buttonLbl
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-
-                        textFormat: Text.StyledText
-                        text: {
-                            var text = activeMenu;
-
-                            var alt = keystateSource.data.Alt;
-                            if (!alt || !alt.Pressed) {
-
-                                // StyleHelpers.removeMnemonics
-                                text = text.replace(/([^&]*)&(.)([^&]*)/g, function (match, p1, p2, p3) {
-                                    return p1.concat(p2, p3);
-                                });
-                            }
-
-                            return Util.stylizeEscapedMnemonics(Util.toHtmlEscaped(text));
-                        }
-
-                        color: {
-                            if (button.menuOpened) {
-                                return enforceLattePalette ? latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
-                            } else if (buttonMouseArea.containsMouse) {
-                                return enforceLattePalette ? latteBridge.palette.buttonTextColor : theme.buttonTextColor
-                            } else {
-                                return enforceLattePalette ? latteBridge.palette.textColor : theme.textColor;
-                            }
-                        }
-                    }
-
-                    // QMenu opens on press, so we'll replicate that here
-                    MouseArea {
-                        id: buttonMouseArea
-                        anchors.fill: parent
-                        hoverEnabled: true
-
-                        onPressed: {
-                            buttonItem.clicked();
-                        }
-                    }
                 }
             }
         }
