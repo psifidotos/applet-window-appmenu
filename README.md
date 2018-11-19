@@ -28,7 +28,7 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 
 **Qt elements**: Quick Widgets DBus
 
-**KF5 elements**: Plasma WindowSystem
+**KF5 elements**: Plasma WindowSystem extra-cmake-modules
 
 **X11 libraries**: XCB RandR
 
