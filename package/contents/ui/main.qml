@@ -59,6 +59,7 @@ Item {
         Layout.preferredWidth: implicitWidth
         Layout.fillWidth: root.vertical
         Layout.fillHeight: !root.vertical
+        enabled: menuAvailable
 
         buttonIndex: 0
         icon: "application-menu"
