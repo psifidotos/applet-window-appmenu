@@ -17,14 +17,6 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 <i>Settings window</i>
 </p>
 
-# Features
-
-- Minimize-state aware
-- Multi-Screen aware
-- Support Latte new painting
-- based totally on official plasma appmenu applet in order to improve maintainability and code exchange
-
-
 # Requires
 
 - Qt >= 5.9
