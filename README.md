@@ -8,7 +8,12 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 </p>
 
 <p align="center">
-<img src="https://i.imgur.com/gBPQfEO.png" width="580"><br/>
+<img src="https://i.imgur.com/ARJbMWX.gif" width="580"><br/>
+<i>scroll menu support</i>
+</p>
+
+<p align="center">
+<img src="https://i.imgur.com/UyUOUZG.png" width="580"><br/>
 <i>Settings window</i>
 </p>
 
