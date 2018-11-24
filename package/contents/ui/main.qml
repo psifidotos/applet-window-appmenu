@@ -82,8 +82,8 @@ Item {
         id: fullLayout
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumWidth: latteInEditMode ? buttonGrid.width : gridFlickable.width
-        Layout.preferredWidth: latteInEditMode ? buttonGrid.width : gridFlickable.width
+        Layout.minimumWidth: latteInEditMode ? buttonGrid.width : 0
+        Layout.preferredWidth: latteInEditMode ? buttonGrid.width : implicitWidth
         Layout.maximumWidth: buttonGrid.width
 
         //BEGIN Latte Dock Communicator for CompactRepresentation
