@@ -145,8 +145,8 @@ Item {
                 id: buttonGrid
 
                 flow: GridLayout.LeftToRight
-                rowSpacing: units.smallSpacing
-                columnSpacing: units.smallSpacing
+                rowSpacing: 0
+                columnSpacing: 0
 
                 Repeater {
                     id: buttonRepeater
