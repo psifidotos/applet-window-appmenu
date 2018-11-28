@@ -35,10 +35,51 @@ Item {
     readonly property bool view: plasmoid.configuration.compactView
     readonly property bool inEditMode: plasmoid.userConfiguring || latteInEditMode
     readonly property bool menuAvailable: appMenuModel.menuAvailable
-
     readonly property bool kcmAuthorized: KCMShell.authorize(["style.desktop"]).length > 0
 
-    //BEGIN Latte Dock Communicator for CompactRepresentation
+    readonly property bool inFullView: !plasmoid.configuration.compactView
+    readonly property bool inCompactView: plasmoid.configuration.compactView
+
+    Plasmoid.preferredRepresentation: plasmoid.fullRepresentation
+    Plasmoid.status: inFullView ? fullLayout.status : compactLayout.status
+
+    //BEGIN Layout properties
+    Layout.fillWidth: inFullView ? true : root.vertical
+    Layout.fillHeight: inFullView ? true : !root.vertical
+    Layout.minimumWidth: {
+        if (inFullView) {
+            if (plasmoid.configuration.fillWidth && !inEditMode) {
+                return -1;
+            }
+
+            return inEditMode ? buttonGrid.width : 0
+        } else {
+            return -1;
+        }
+    }
+
+    Layout.preferredWidth: {
+        if (inFullView) {
+            if (plasmoid.configuration.fillWidth && !inEditMode) {
+                return -1;
+            }
+
+            return inEditMode ? buttonGrid.width : implicitWidth
+        } else {
+            return compactLayout.implicitWidth;
+        }
+    }
+
+    Layout.maximumWidth: {
+        if (inFullView) {
+            return plasmoid.configuration.fillWidth && !inEditMode ? Infinity : buttonGrid.width;
+        } else {
+            return -1;
+        }
+    }
+    //END Layout properties
+
+    //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
     onLatteBridgeChanged: {
         if (latteBridge) {
@@ -51,34 +92,54 @@ Item {
     //END  Latte Dock Communicator
 
     onViewChanged: {
-        plasmoid.nativeInterface.view = view
+        plasmoid.nativeInterface.view = view;
     }
 
-    Plasmoid.preferredRepresentation: (plasmoid.configuration.compactView || vertical) ? Plasmoid.compactRepresentation : Plasmoid.fullRepresentation
+    Component.onCompleted: {
+        plasmoid.nativeInterface.buttonGrid = buttonGrid;
 
-    Plasmoid.compactRepresentation: PaintedToolButton {
-        Layout.preferredWidth: implicitWidth
-        Layout.fillWidth: root.vertical
-        Layout.fillHeight: !root.vertical
+        // using a Connections {} doesn't work for some reason in Qt >= 5.8
+        plasmoid.nativeInterface.requestActivateIndex.connect(function (index) {
+            if(inFullView) {
+                var idx = Math.max(0, Math.min(buttonRepeater.count - 1, index))
+                var button = buttonRepeater.itemAt(index)
+
+                if (button) {
+                    button.clicked()
+                }
+            } else {
+                compactLayout.clicked();
+            }
+        });
+
+        plasmoid.activated.connect(function () {
+            if (inFullView) {
+                var button = buttonRepeater.itemAt(0);
+                if (button) {
+                    button.clicked();
+                }
+            } else {
+                compactLayout.clicked();
+            }
+        });
+    }
+
+    PaintedToolButton {
+        id: compactLayout
+        anchors.fill: parent
         enabled: menuAvailable
+        visible: inCompactView
 
         buttonIndex: 0
         icon: "application-menu"
 
         onClicked: {
-            plasmoid.nativeInterface.trigger(this, buttonIndex);
-        }
-
-        //BEGIN Latte Dock Communicator for CompactRepresentation
-        property QtObject latteBridge: null
-        onLatteBridgeChanged: {
-            if (latteBridge) {
-                root.latteBridge = latteBridge;
+            if (visible) {
+                plasmoid.nativeInterface.trigger(this, buttonIndex);
             }
         }
-        //END  Latte Dock Communicator
 
-        Plasmoid.status: {
+        readonly property int status: {
             if (menuAvailable && plasmoid.nativeInterface.currentIndex === 0) {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable && appMenuModel.visible){
@@ -91,40 +152,12 @@ Item {
         }
     }
 
-    Plasmoid.fullRepresentation: Item {
+    Item {
         id: fullLayout
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        Layout.minimumWidth: {
-            if (plasmoid.configuration.fillWidth && !inEditMode) {
-                return -1;
-            }
+        anchors.fill: parent
+        visible: inFullView
 
-            return inEditMode ? buttonGrid.width : 0
-        }
-
-        Layout.preferredWidth: {
-            if (plasmoid.configuration.fillWidth && !inEditMode) {
-                return -1;
-            }
-
-            return inEditMode ? buttonGrid.width : implicitWidth
-        }
-
-        Layout.maximumWidth: {
-            return plasmoid.configuration.fillWidth && !inEditMode ? Infinity : buttonGrid.width;
-        }
-
-        //BEGIN Latte Dock Communicator for CompactRepresentation
-        property QtObject latteBridge: null
-        onLatteBridgeChanged: {
-            if (latteBridge) {
-                root.latteBridge = latteBridge;
-            }
-        }
-        //END  Latte Dock Communicator
-
-        Plasmoid.status: {
+        readonly property int status: {
             if (menuAvailable && plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable){
@@ -137,27 +170,6 @@ Item {
             }
 
             return PlasmaCore.Types.PassiveStatus;
-        }
-
-        Component.onCompleted: {
-            plasmoid.nativeInterface.buttonGrid = buttonGrid
-
-            // using a Connections {} doesn't work for some reason in Qt >= 5.8
-            plasmoid.nativeInterface.requestActivateIndex.connect(function (index) {
-                var idx = Math.max(0, Math.min(buttonRepeater.count - 1, index))
-                var button = buttonRepeater.itemAt(index)
-
-                if (button) {
-                    button.clicked()
-                }
-            });
-
-            plasmoid.activated.connect(function () {
-                var button = buttonRepeater.itemAt(0);
-                if (button) {
-                    button.clicked();
-                }
-            });
         }
 
         // So we can show mnemonic underlines only while Alt is pressed
