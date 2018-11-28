@@ -77,6 +77,18 @@ Item {
             }
         }
         //END  Latte Dock Communicator
+
+        Plasmoid.status: {
+            if (menuAvailable && plasmoid.nativeInterface.currentIndex === 0) {
+                return PlasmaCore.Types.NeedsAttentionStatus;
+            } else if (menuAvailable && appMenuModel.visible){
+                return PlasmaCore.Types.ActiveStatus
+            } else if (!inEditMode) {
+                return PlasmaCore.Types.HiddenStatus;
+            }
+
+            return PlasmaCore.Types.PassiveStatus;
+        }
     }
 
     Plasmoid.fullRepresentation: Item {
