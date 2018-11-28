@@ -29,6 +29,7 @@ Item {
     id: configGeneral
 
     property alias cfg_compactView: compactViewRadioButton.checked
+    property alias cfg_fillWidth: fillWidthChk.checked
     property alias cfg_filterByActive: activeChk.checked
     property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
@@ -75,6 +76,21 @@ Item {
                 enabled: !disableSetting
                 text: i18n("Use single button for application menu")
                 exclusiveGroup: viewOptionGroup
+            }
+        }
+
+        GridLayout{
+            columns: 2
+
+            Controls.Label{
+                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+                text: i18n("Behavior:")
+                horizontalAlignment: Text.AlignRight
+            }
+
+            Controls.CheckBox {
+                id: fillWidthChk
+                text: i18n("Always use maximum available width")
             }
         }
 

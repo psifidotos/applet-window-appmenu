@@ -33,6 +33,7 @@ Item {
 
     readonly property bool vertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool view: plasmoid.configuration.compactView
+    readonly property bool inEditMode: plasmoid.userConfiguring || latteInEditMode
     readonly property bool menuAvailable: appMenuModel.menuAvailable
 
     readonly property bool kcmAuthorized: KCMShell.authorize(["style.desktop"]).length > 0
@@ -82,9 +83,25 @@ Item {
         id: fullLayout
         Layout.fillWidth: true
         Layout.fillHeight: true
-        Layout.minimumWidth: latteInEditMode ? buttonGrid.width : 0
-        Layout.preferredWidth: latteInEditMode ? buttonGrid.width : implicitWidth
-        Layout.maximumWidth: buttonGrid.width
+        Layout.minimumWidth: {
+            if (plasmoid.configuration.fillWidth && !inEditMode) {
+                return -1;
+            }
+
+            return inEditMode ? buttonGrid.width : 0
+        }
+
+        Layout.preferredWidth: {
+            if (plasmoid.configuration.fillWidth && !inEditMode) {
+                return -1;
+            }
+
+            return inEditMode ? buttonGrid.width : implicitWidth
+        }
+
+        Layout.maximumWidth: {
+            return plasmoid.configuration.fillWidth && !inEditMode ? Infinity : buttonGrid.width;
+        }
 
         //BEGIN Latte Dock Communicator for CompactRepresentation
         property QtObject latteBridge: null
@@ -100,10 +117,14 @@ Item {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable){
                 //when we're not enabled set to active to show the configure button
-                return buttonRepeater.count > 0 ? PlasmaCore.Types.ActiveStatus : PlasmaCore.Types.HiddenStatus;
-            } else {
-                return PlasmaCore.Types.PassiveStatus;
+                if (buttonRepeater.count > 0) {
+                    return PlasmaCore.Types.ActiveStatus
+                } else if (!plasmoid.configuration.fillWidth) {
+                    return PlasmaCore.Types.HiddenStatus;
+                }
             }
+
+            return PlasmaCore.Types.PassiveStatus;
         }
 
         Component.onCompleted: {
@@ -136,7 +157,7 @@ Item {
 
         MenuFlickable{
             id: gridFlickable
-            width: parent.width < contentWidth && !latteInEditMode ? parent.width : contentWidth
+            width: parent.width < contentWidth && !inEditMode ? parent.width : contentWidth
             height: parent.height
             contentWidth: buttonGrid.width
             contentHeight: buttonGrid.height
@@ -150,7 +171,7 @@ Item {
 
                 Repeater {
                     id: buttonRepeater
-                    model: appMenuModel.visible || latteInEditMode ? appMenuModel : null
+                    model: appMenuModel.visible || inEditMode ? appMenuModel : null
 
                     PaintedToolButton{
                         id:menuItem

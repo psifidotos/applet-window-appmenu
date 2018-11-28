@@ -10,6 +10,10 @@
       <label>If true it only shows a button for the application menu.</label>
       <default>false</default>
     </entry>
+    <entry name="fillWidth" type="Bool">
+      <label>If true it always fill the maximum available width, even when there are no menu items shown.</label>
+      <default>false</default>
+    </entry>
     <entry name="filterByActive" type="Bool">
       <label>If true it only shows the app menu if the current window that provides its menu is also active</label>
       <default>true</default>
