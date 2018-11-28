@@ -73,6 +73,10 @@ AppMenuModel::AppMenuModel(QObject *parent)
             , static_cast<void (KWindowSystem::*)(WId)>(&KWindowSystem::windowChanged)
             , this
             , &AppMenuModel::onWindowChanged);
+    connect(KWindowSystem::self()
+            , static_cast<void (KWindowSystem::*)(WId)>(&KWindowSystem::windowRemoved)
+            , this
+            , &AppMenuModel::onWindowRemoved);
 
     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {
         if (!m_updatePending)
@@ -330,6 +334,14 @@ void AppMenuModel::onWindowChanged(WId id)
     if (m_currentWindowId == id) {
         KWindowInfo info(id, NET::WMState | NET::WMGeometry);
         filterWindow(info);
+    }
+}
+
+void AppMenuModel::onWindowRemoved(WId id)
+{
+    if (m_currentWindowId == id) {
+        setMenuAvailable(false);
+        setVisible(false);
     }
 }
 
