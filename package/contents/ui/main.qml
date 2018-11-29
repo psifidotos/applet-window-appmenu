@@ -195,7 +195,17 @@ Item {
 
                 Repeater {
                     id: buttonRepeater
-                    model: appMenuModel.visible || inEditMode ? appMenuModel : null
+                    model: {
+                        if (appMenuModel.visible && appMenuModel.menuAvailable) {
+                            return appMenuModel;
+                        }
+
+                        if (inEditMode && !(appMenuModel.visible || appMenuModel.menuAvailable)) {
+                            return editModeModel;
+                        }
+
+                        return null;
+                    }
 
                     PaintedToolButton{
                         id:menuItem
@@ -248,6 +258,23 @@ Item {
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel
+        }
+    }
+
+
+    //! Example model in order to be used in edit mode when there is no
+    //! other menu available
+    ListModel {
+        id: editModeModel
+
+        ListElement {
+            activeMenu: "File"
+        }
+        ListElement {
+            activeMenu: "Edit"
+        }
+        ListElement {
+            activeMenu: "Help"
         }
     }
 }
