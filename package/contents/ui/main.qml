@@ -198,9 +198,7 @@ Item {
                     model: {
                         if (appMenuModel.visible && appMenuModel.menuAvailable) {
                             return appMenuModel;
-                        }
-
-                        if (inEditMode && !(appMenuModel.visible || appMenuModel.menuAvailable)) {
+                        } else if (inEditMode) {
                             return editModeModel;
                         }
 
