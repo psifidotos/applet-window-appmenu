@@ -68,6 +68,10 @@ AppMenuModel::AppMenuModel(QObject *parent)
     : QAbstractListModel(parent),
       m_serviceWatcher(new QDBusServiceWatcher(this))
 {
+    if (!KWindowSystem::isPlatformX11()) {
+        return;
+    }
+
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppMenuModel::onActiveWindowChanged);
     connect(KWindowSystem::self()
             , static_cast<void (KWindowSystem::*)(WId)>(&KWindowSystem::windowChanged)
