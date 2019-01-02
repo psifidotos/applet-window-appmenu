@@ -37,8 +37,8 @@ Item {
     readonly property bool menuAvailable: appMenuModel.menuAvailable
     readonly property bool kcmAuthorized: KCMShell.authorize(["style.desktop"]).length > 0
 
-    readonly property bool inFullView: !plasmoid.configuration.compactView
-    readonly property bool inCompactView: plasmoid.configuration.compactView
+    readonly property bool inFullView: !plasmoid.configuration.compactView && plasmoid.formFactor === PlasmaCore.Types.Horizontal
+    readonly property bool inCompactView: !inFullView
 
     Plasmoid.preferredRepresentation: plasmoid.fullRepresentation
     Plasmoid.status: inFullView ? fullLayout.status : compactLayout.status
