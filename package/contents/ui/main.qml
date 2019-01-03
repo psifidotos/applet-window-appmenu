@@ -64,7 +64,7 @@ Item {
                 return -1;
             }
 
-            return inEditMode ? buttonGrid.width : implicitWidth
+            return buttonGrid.width;
         } else {
             return compactLayout.implicitWidth;
         }
