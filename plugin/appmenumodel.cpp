@@ -354,7 +354,9 @@ void AppMenuModel::filterWindow(KWindowInfo &info)
     if (m_currentWindowId == info.win()) {
         const bool contained = m_screenGeometry.isNull() || m_screenGeometry.contains(info.geometry().center());
 
-        setVisible(!info.isMinimized() && contained);
+        const bool isActive = m_filterByActive ? info.win() == KWindowSystem::activeWindow() : true;
+
+        setVisible(isActive && !info.isMinimized() && contained);
     }
 }
 
