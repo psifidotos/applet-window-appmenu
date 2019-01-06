@@ -26,6 +26,10 @@
       <label>If true it only shows the app menu if the current active window is in the same screen with the plasmoid</label>
       <default>false</default>
     </entry>
+    <entry name="spacing" type="Int">
+      <label>Spacing between menu items</label>
+      <default>6</default>
+    </entry>
   </group>
 
 </kcfg>

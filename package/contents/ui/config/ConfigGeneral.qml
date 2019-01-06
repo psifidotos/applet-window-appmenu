@@ -33,6 +33,7 @@ Item {
     property alias cfg_filterByActive: activeChk.checked
     property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
+    property alias cfg_spacing: spacingSlider.value
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
@@ -76,6 +77,30 @@ Item {
                 enabled: !disableSetting
                 text: i18n("Use single button for application menu")
                 exclusiveGroup: viewOptionGroup
+            }
+        }
+
+        GridLayout{
+            columns: 2
+            enabled: !compactViewRadioButton.checked
+
+            Controls.Label{
+                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+                text: i18n("Spacing:")
+                horizontalAlignment: Text.AlignRight
+            }
+
+            RowLayout{
+                enabled: !inFillChk.checked
+                Controls.Slider {
+                    id: spacingSlider
+                    minimumValue: 0
+                    maximumValue: 36
+                    stepSize: 1
+                }
+                Controls.Label {
+                    text: spacingSlider.value + " " + i18n("px.")
+                }
             }
         }
 

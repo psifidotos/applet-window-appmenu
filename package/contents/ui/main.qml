@@ -66,7 +66,7 @@ Item {
 
             return buttonGrid.width;
         } else {
-            return compactLayout.implicitWidth;
+            return Math.max(compactLayout.implicitWidth, root.height);
         }
     }
 
