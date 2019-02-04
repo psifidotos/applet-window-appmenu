@@ -159,15 +159,16 @@ Item {
         visible: inFullView
 
         readonly property int status: {
-            if (menuAvailable && plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
-                return PlasmaCore.Types.NeedsAttentionStatus;
-            } else if (menuAvailable){
-                //when we're not enabled set to active to show the configure button
-                if (buttonRepeater.count > 0) {
+            if (menuAvailable){
+                if (plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
+                    return PlasmaCore.Types.NeedsAttentionStatus;
+                } else if (buttonRepeater.count > 0) {
                     return PlasmaCore.Types.ActiveStatus
                 } else if (!plasmoid.configuration.fillWidth) {
                     return PlasmaCore.Types.HiddenStatus;
                 }
+            } else if (!menuAvailable && !inEditMode && !plasmoid.configuration.fillWidth){
+                return PlasmaCore.Types.HiddenStatus;
             }
 
             return PlasmaCore.Types.PassiveStatus;
