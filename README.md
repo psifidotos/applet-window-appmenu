@@ -13,7 +13,7 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 </p>
 
 <p align="center">
-<img src="https://i.imgur.com/UyUOUZG.png" width="580"><br/>
+<img src="https://i.imgur.com/pAX0a2J.png" width="580"><br/>
 <i>Settings window</i>
 </p>
 
