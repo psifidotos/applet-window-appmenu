@@ -1,5 +1,15 @@
 ### CHANGELOG
 
+#### Version 0.3
+
+* add an option in order to set spacing between menu items
+* dont crash under wayland
+* in edit mode show a menu sample in order to not show an empty space
+* option to always fill maximum available space
+* avoid empty QMenu (upstream plasma fix)
+* reduce menu items spacing
+* support new Latte Communicator mechanism
+
 #### Version 0.2
 
 * Scroll menu support when the menu is too big
