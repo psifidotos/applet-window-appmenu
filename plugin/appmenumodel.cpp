@@ -352,7 +352,15 @@ void AppMenuModel::onWindowRemoved(WId id)
 void AppMenuModel::filterWindow(KWindowInfo &info)
 {
     if (m_currentWindowId == info.win()) {
-        const bool contained = m_screenGeometry.isNull() || m_screenGeometry.contains(info.geometry().center());
+        //! HACK: if the user has enabled screen scaling under X11 environment
+        //! then the window and screen geometries can not be trusted for comparison
+        //! before windows coordinates be adjusted properly.
+        //! BUG: 404500
+        QPoint windowCenter = info.geometry().center();
+        if (KWindowSystem::isPlatformX11()) {
+            windowCenter /= qApp->devicePixelRatio();
+        }
+        const bool contained = m_screenGeometry.isNull() || m_screenGeometry.contains(windowCenter);
 
         const bool isActive = m_filterByActive ? info.win() == KWindowSystem::activeWindow() : true;
 
