@@ -90,6 +90,10 @@ Item {
 
     readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
+
+    Broadcaster {
+        id: broadcaster
+    }
     //END  Latte Dock Communicator
 
     onViewChanged: {
@@ -97,6 +101,8 @@ Item {
     }
 
     Component.onCompleted: {
+        plasmoid.configuration.windowTitleIsPresent = false;
+
         plasmoid.nativeInterface.buttonGrid = buttonGrid;
 
         // using a Connections {} doesn't work for some reason in Qt >= 5.8
@@ -195,10 +201,26 @@ Item {
                 rowSpacing: 0
                 columnSpacing: 0
 
+                property int currentIndex: -1
+
+                readonly property bool containsMouse: {
+                    if (plasmoid.nativeInterface.currentIndex>=0) {
+                        return true;
+                    }
+
+                    for (var i=0; i<buttonGrid.children.length; ++i) {
+                        if (buttonGrid.children[i] !== buttonRepeater && buttonGrid.children[i].containsMouse) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
                 Repeater {
                     id: buttonRepeater
                     model: {
-                        if (appMenuModel.visible && appMenuModel.menuAvailable) {
+                        if (appMenuModel.visible && appMenuModel.menuAvailable && !broadcaster.hiddenFromBroadcast && !inEditMode) {
                             return appMenuModel;
                         } else if (inEditMode) {
                             return editModeModel;
@@ -210,7 +232,7 @@ Item {
                     PaintedToolButton{
                         id:menuItem
 
-                        Layout.minimumWidth: implicitWidth
+                        Layout.minimumWidth: broadcaster.hiddenFromBroadcast && !inEditMode ? 0 : implicitWidth
                         Layout.preferredWidth: Layout.minimumWidth
 
                         Layout.minimumHeight: fullLayout.height

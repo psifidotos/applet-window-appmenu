@@ -33,6 +33,10 @@ Item {
     property string text: ""
     property string icon: ""
 
+    //! HACK: in order to identify containsMouse correctly at all cases,
+    //! best way to reproduce the issue is in Unity mode that many buttons
+    //! thought that they containMouse even though they did not
+    property bool containsMouse: inFullView ? buttonGrid.currentIndex === buttonIndex : buttonMouseArea.containsMouse
     readonly property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
     readonly property int shadow: 3
     readonly property int implicitWidth: {
@@ -74,14 +78,14 @@ Item {
         color: {
             if (menuOpened) {
                 return enforceLattePalette ? root.latteBridge.palette.highlightColor : theme.highlightColor
-            } else if (buttonMouseArea.containsMouse) {
+            } else if (buttonItem.containsMouse) {
                 return enforceLattePalette ? root.latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
             } else {
                 return 'transparent';
             }
         }
 
-        layer.enabled: menuOpened || buttonMouseArea.containsMouse
+        layer.enabled: menuOpened || buttonItem.containsMouse
         layer.effect: DropShadow{
             radius: buttonItem.shadow
             samples: 2 * radius
@@ -117,6 +121,24 @@ Item {
                 buttonItem.scrolledDown(buttonItem.implicitWidth);
             }
         }
+
+        //! HACK: in order to identify containsMouse correctly at all cases,
+        //! best way to reproduce the issue is in Unity mode that many buttons
+        //! thought that they containMouse even though they did not
+        onEntered: {
+            if (inFullView) {
+                buttonGrid.currentIndex = buttonIndex;
+            }
+        }
+
+        //! HACK: in order to identify containsMouse correctly at all cases,
+        //! best way to reproduce the issue is in Unity mode that many buttons
+        //! thought that they containMouse even though they did not
+        onExited: {
+            if (inFullView) {
+                buttonGrid.currentIndex = -1;
+            }
+        }
     }
 
     //! Components
@@ -145,7 +167,7 @@ Item {
             color: {
                 if (buttonItem.menuOpened) {
                     return enforceLattePalette ? root.latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
-                } else if (buttonMouseArea.containsMouse) {
+                } else if (buttonItem.containsMouse) {
                     return enforceLattePalette ? root.latteBridge.palette.buttonTextColor : theme.buttonTextColor
                 } else {
                     return enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;
@@ -167,7 +189,7 @@ Item {
                 color: {
                     if (buttonItem.menuOpened) {
                         return enforceLattePalette ? root.latteBridge.palette.highlightedTextColor : theme.highlightedTextColor
-                    } else if (buttonMouseArea.containsMouse) {
+                    } else if (buttonItem.containsMouse) {
                         return enforceLattePalette ? root.latteBridge.palette.buttonTextColor : theme.buttonTextColor
                     } else {
                         return enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;

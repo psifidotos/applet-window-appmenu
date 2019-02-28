@@ -34,6 +34,7 @@ Item {
     property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
     property alias cfg_spacing: spacingSlider.value
+    property alias cfg_showWindowTitleOnMouseExit: showWindowTitleChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
@@ -116,6 +117,17 @@ Item {
             Controls.CheckBox {
                 id: fillWidthChk
                 text: i18n("Always use maximum available width")
+            }
+
+            Controls.Label{
+                text: ""
+                visible: showWindowTitleChk.visible
+            }
+
+            Controls.CheckBox {
+                id: showWindowTitleChk
+                text: i18n("Show Window Title applet on mouse exit")
+                visible: plasmoid.configuration.windowTitleIsPresent
             }
         }
 

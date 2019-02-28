@@ -30,6 +30,15 @@
       <label>Spacing between menu items</label>
       <default>6</default>
     </entry>
+    <entry name="windowTitleIsPresent" type="Bool">
+      <default>false</default>
+      <label>try to identify if windowTitle exists in the same containment. This is set only with applets cooperation</label>
+    </entry>
+    <entry name="showWindowTitleOnMouseExit" type="Bool">
+      <default>false</default>
+      <label>will become hidden in favour of appmenu when the mouse hovers the applet</label>
+    </entry>
+
   </group>
 
 </kcfg>
