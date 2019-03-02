@@ -38,7 +38,14 @@
       <default>false</default>
       <label>will become hidden in favour of appmenu when the mouse hovers the applet</label>
     </entry>
-
+    <entry name="containmentType" type="Enum">
+      <choices>
+         <choice name="Loading"/>
+         <choice name="Plasma"/>
+         <choice name="Latte"/>
+      </choices>
+      <label>it helps to enable/disable options that are specific to plasma or Latte panels</label>
+      <default>0</default>
+    </entry>
   </group>
-
 </kcfg>

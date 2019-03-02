@@ -31,6 +31,8 @@ import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
 Item {
     id: root
 
+    readonly property int containmentType: plasmoid.configuration.containmentType
+
     readonly property bool vertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool view: plasmoid.configuration.compactView
     readonly property bool inEditMode: plasmoid.userConfiguring || latteInEditMode
@@ -102,8 +104,9 @@ Item {
 
     Component.onCompleted: {
         plasmoid.configuration.windowTitleIsPresent = false;
-
         plasmoid.nativeInterface.buttonGrid = buttonGrid;
+
+        containmentIdentifierTimer.start();
 
         // using a Connections {} doesn't work for some reason in Qt >= 5.8
         plasmoid.nativeInterface.requestActivateIndex.connect(function (index) {
@@ -297,6 +300,23 @@ Item {
         }
         ListElement {
             activeMenu: "Help"
+        }
+    }
+
+    //! this timer is used in order to identify in which containment the applet is in
+    //! it should be called only the first time an applet is created and loaded because
+    //! afterwards the applet has no way to move between different processes such
+    //! as Plasma and Latte
+    Timer{
+        id: containmentIdentifierTimer
+        interval: 5000
+        onTriggered: {
+            if (latteBridge) {
+                plasmoid.configuration.containmentType = 2; /*Latte containment with new API*/
+                latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "isPresent", true);
+            } else {
+                plasmoid.configuration.containmentType = 1; /*Plasma containment or Latte with old API*/
+            }
         }
     }
 }

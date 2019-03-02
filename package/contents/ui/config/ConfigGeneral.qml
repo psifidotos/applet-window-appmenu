@@ -127,7 +127,8 @@ Item {
             Controls.CheckBox {
                 id: showWindowTitleChk
                 text: i18n("Show Window Title applet on mouse exit")
-                visible: plasmoid.configuration.windowTitleIsPresent
+                visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
+                enabled: plasmoid.configuration.windowTitleIsPresent
             }
         }
 
