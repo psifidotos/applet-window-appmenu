@@ -91,15 +91,14 @@ Item {
             samples: 2 * radius
             color: "#ff151515"
         }
+    }
 
-        Loader{
-            id: itemLoader
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+    Loader{
+        id: itemLoader
+        anchors.centerIn: parent
 
-            active: buttonItem.text !== "" || buttonItem.icon !== ""
-            sourceComponent:  buttonItem.text !== "" ? labelComponent : iconComponent
-        }
+        active: buttonItem.text !== "" || buttonItem.icon !== ""
+        sourceComponent:  buttonItem.text !== "" ? labelComponent : iconComponent
     }
 
     // QMenu opens on press, so we'll replicate that here
