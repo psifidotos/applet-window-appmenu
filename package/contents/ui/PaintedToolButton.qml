@@ -112,11 +112,19 @@ Item {
         }
 
         onWheel: {
-            var angle = wheel.angleDelta.y / 8;
+            var delta = 0;
 
-            if (angle>12) {
+            if (wheel.angleDelta.y>=0 && wheel.angleDelta.x>=0) {
+                delta = Math.max(wheel.angleDelta.y, wheel.angleDelta.x);
+            } else {
+                delta = Math.min(wheel.angleDelta.y, wheel.angleDelta.x);
+            }
+
+            var angle = delta / 8;
+
+            if (angle>10) {
                 buttonItem.scrolledUp(buttonItem.implicitWidth);
-            } else if (angle<-12) {
+            } else if (angle<-10) {
                 buttonItem.scrolledDown(buttonItem.implicitWidth);
             }
         }
