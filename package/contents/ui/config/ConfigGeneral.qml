@@ -92,7 +92,6 @@ Item {
             }
 
             RowLayout{
-                enabled: !inFillChk.checked
                 Controls.Slider {
                     id: spacingSlider
                     minimumValue: 0
