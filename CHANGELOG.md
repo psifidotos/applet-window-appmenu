@@ -1,5 +1,11 @@
 ### CHANGELOG
 
+#### Version 0.4
+
+* provide a Unity behavior option when used with Window Title v0.4 in latest Latte master
+* support horizontal scrolling
+* improve screen filtering
+
 #### Version 0.3
 
 * add an option in order to set spacing between menu items
