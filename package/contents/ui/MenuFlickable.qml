@@ -25,6 +25,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 
 Flickable{
     id: flickable
+    anchors.left: parent.left
 
     clip: true
     interactive: true
