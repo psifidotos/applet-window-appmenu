@@ -1,5 +1,10 @@
 ### CHANGELOG
 
+#### Version 0.4.1
+
+* fix not showing menu items for all applications
+* fix RTL menu items alignment
+
 #### Version 0.4
 
 * provide a Unity behavior option when used with Window Title v0.4 in latest Latte master
