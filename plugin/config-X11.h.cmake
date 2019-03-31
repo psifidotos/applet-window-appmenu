@@ -1,3 +1,6 @@
+/* Define if you have X11 at all */
+#cmakedefine01 HAVE_X11
+
 /* Define if you have the XRandR extension */
 #cmakedefine HAVE_XRANDR 1
 
@@ -40,5 +43,3 @@
 /* Define if you have XRandR 1.3 */
 #cmakedefine HAS_RANDR_1_3 1
 
-/* Define if you have X11 at all */
-#define HAVE_X11 ${X11_FOUND}

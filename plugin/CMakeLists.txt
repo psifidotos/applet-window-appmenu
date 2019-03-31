@@ -22,7 +22,7 @@ target_link_libraries(appmenuplugin
 find_package(X11)
 set_package_properties(X11 PROPERTIES DESCRIPTION "X11 libraries"
                         URL "http://www.x.org"
-                        TYPE OPTIONAL
+                        TYPE REQUIRED
                         PURPOSE "Required for building the X11 based workspace")
 
 if(X11_FOUND)
@@ -36,7 +36,7 @@ if(X11_FOUND)
 endif()
 
 if(X11_FOUND AND XCB_XCB_FOUND)
-  set(HAVE_X11 1)
+  set(HAVE_X11 ON)
 endif()
 
 configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h)
