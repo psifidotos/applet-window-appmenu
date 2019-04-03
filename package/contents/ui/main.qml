@@ -202,6 +202,15 @@ Item {
             visible: broadcaster.cooperationEstablished && root.inFullView
                      && plasmoid.configuration.fillWidth && buttonRepeater.count > 0
             hoverEnabled: true
+            propagateComposedEvents: true
+
+            onPressed: {
+                mouse.accepted = false;
+            }
+
+            onReleased: {
+                mouse.accepted = false;
+            }
         }
 
         MenuFlickable{
