@@ -168,6 +168,10 @@ Item {
         visible: inFullView
 
         readonly property int status: {
+            if (broadcaster.cooperationEstablished && broadcaster.hiddenFromBroadcast && !inEditMode) {
+                return PlasmaCore.Types.HiddenStatus;
+            }
+
             if (menuAvailable){
                 if (plasmoid.nativeInterface.currentIndex > -1 && buttonRepeater.count > 0) {
                     return PlasmaCore.Types.NeedsAttentionStatus;
@@ -190,6 +194,16 @@ Item {
             connectedSources: ["Alt"]
         }
 
+        MouseArea {
+            id: fullViewBackMousearea
+            anchors.left: gridFlickable.right
+            width: parent.width - gridFlickable.width
+            height: parent.height - 1
+            visible: broadcaster.cooperationEstablished && root.inFullView
+                     && plasmoid.configuration.fillWidth && buttonRepeater.count > 0
+            hoverEnabled: true
+        }
+
         MenuFlickable{
             id: gridFlickable
             width: parent.width < contentWidth && !inEditMode ? parent.width : contentWidth
@@ -207,7 +221,7 @@ Item {
                 property int currentIndex: -1
 
                 readonly property bool containsMouse: {
-                    if (plasmoid.nativeInterface.currentIndex>=0) {
+                    if (plasmoid.nativeInterface.currentIndex>=0 || fullViewBackMousearea.containsMouse) {
                         return true;
                     }
 
