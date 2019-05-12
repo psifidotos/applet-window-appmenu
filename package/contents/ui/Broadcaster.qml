@@ -44,11 +44,15 @@ Item{
     }
 
     Component.onDestruction: {
-        latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setCooperation", false);
+        if (latteBridge) {
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setCooperation", false);
+        }
     }
 
     onIsActiveChanged: {
-        latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setCooperation", isActive);
+        if (latteBridge) {
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setCooperation", isActive);
+        }
     }
 
     onMenuIsPresentChanged: {
