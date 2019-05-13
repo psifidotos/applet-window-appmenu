@@ -86,15 +86,17 @@ void AppMenuApplet::init()
 {
 }
 
-AppMenuModel *AppMenuApplet::model() const
+QObject *AppMenuApplet::model() const
 {
     return m_model;
 }
 
-void AppMenuApplet::setModel(AppMenuModel *model)
+void AppMenuApplet::setModel(QObject *model)
 {
-    if (m_model != model) {
-        m_model = model;
+    QAbstractListModel *appmodel = qobject_cast<QAbstractListModel *>(model);
+
+    if (appmodel && m_model != appmodel) {
+        m_model = appmodel;
         emit modelChanged();
     }
 }
