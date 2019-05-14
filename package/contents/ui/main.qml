@@ -337,6 +337,7 @@ Item {
             if (latteBridge) {
                 plasmoid.configuration.containmentType = 2; /*Latte containment with new API*/
                 latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "isPresent", true);
+                latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "menuIsPresent", broadcaster.menuIsPresent);
             } else {
                 plasmoid.configuration.containmentType = 1; /*Plasma containment or Latte with old API*/
             }
