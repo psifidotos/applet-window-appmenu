@@ -1,5 +1,14 @@
 ### CHANGELOG
 
+#### Version 0.4.2
+
+* fix a serious crash for some systems when the user was clicking the menu items Plasma or Latte was crashing
+* various improvements for Unity style behavior
+* fix behavior with Latte git version dragging/maximizing/restoring active window from panel empty areas
+* dont register the global menu service under wayland in order for windows to keep their global menus in their windows
+* fix warnings on startup
+
+
 #### Version 0.4.1
 
 * fix not showing menu items for all applications
