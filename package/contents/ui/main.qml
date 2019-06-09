@@ -87,6 +87,7 @@ Item {
         if (latteBridge) {
             latteBridge.actions.setProperty(plasmoid.id, "latteSideColoringEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "activeIndicatorEnabled", false);
+            latteBridge.actions.setProperty(plasmoid.id, "needWindowsTracking", true);
         }
     }
 
@@ -306,6 +307,23 @@ Item {
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel
+        }
+
+        winId: selectedTracker && selectedTracker.lastActiveWindow.isValid ? selectedTracker.lastActiveWindow.winId : -1
+
+       // onWinIdChanged: console.log("In Latte with wid appmenu : "+winId);
+
+        readonly property QtObject windowsTracker:latteBridge
+                             && latteBridge.windowsTracker
+                             && latteBridge.windowsTracker.currentScreen.lastActiveWindow
+                             && latteBridge.windowsTracker.allScreens.lastActiveWindow ? latteBridge.windowsTracker : null
+
+        readonly property QtObject selectedTracker: {
+            if (windowsTracker) {
+                return plasmoid.configuration.filterByScreen ? windowsTracker.currentScreen : windowsTracker.allScreens;
+            }
+
+            return null;
         }
     }
 
