@@ -301,9 +301,9 @@ Item {
     AppMenuPrivate.AppMenuModel {
         id: appMenuModel
 
-        filterByActive: plasmoid.configuration.filterByActive
-        filterChildren: plasmoid.configuration.filterChildrenWindows
-        screenGeometry: plasmoid.configuration.filterByScreen ? plasmoid.screenGeometry : Qt.rect(-1, -1, 0, 0) //null geometry
+        filterByActive: plasmoid.configuration.filterByActive && !selectedTracker
+        filterChildren: plasmoid.configuration.filterChildrenWindows && !selectedTracker
+        screenGeometry: plasmoid.configuration.filterByScreen && !selectedTracker ? plasmoid.screenGeometry : Qt.rect(-1, -1, 0, 0) //null geometry
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel
