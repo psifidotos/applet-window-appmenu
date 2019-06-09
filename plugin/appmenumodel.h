@@ -44,7 +44,10 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
 
     Q_PROPERTY(bool filterByActive READ filterByActive WRITE setFilterByActive NOTIFY filterByActiveChanged)
     Q_PROPERTY(bool filterChildren READ filterChildren WRITE setFilterChildren NOTIFY filterChildrenChanged)
+
     Q_PROPERTY(QRect screenGeometry READ screenGeometry WRITE setScreenGeometry NOTIFY screenGeometryChanged)
+
+    Q_PROPERTY(QVariant winId READ winId WRITE setWinId NOTIFY winIdChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
     ~AppMenuModel() override;
@@ -75,6 +78,9 @@ public:
     QRect screenGeometry() const;
     void setScreenGeometry(QRect geometry);
 
+    QVariant winId() const;
+    void setWinId(const QVariant &id);
+
 signals:
     void requestActivateIndex(int index);
 
@@ -100,6 +106,7 @@ signals:
     void filterChildrenChanged();
     void visibleChanged();
     void screenGeometryChanged();
+    void winIdChanged();
 
 private:
     bool m_filterByActive = false;
@@ -109,6 +116,8 @@ private:
     bool m_visible = true;
 
     QRect m_screenGeometry;
+
+    QVariant m_winId{-1};
 
     //! current active window used
     WId m_currentWindowId = 0;

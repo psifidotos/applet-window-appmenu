@@ -26,8 +26,8 @@
 #include <config-X11.h>
 
 #if HAVE_X11
-    #include <QX11Info>
-    #include <xcb/xcb.h>
+#include <QX11Info>
+#include <xcb/xcb.h>
 #endif
 
 #include <QAction>
@@ -45,7 +45,7 @@ static const QByteArray s_x11AppMenuServiceNamePropertyName = QByteArrayLiteral(
 static const QByteArray s_x11AppMenuObjectPathPropertyName = QByteArrayLiteral("_KDE_NET_WM_APPMENU_OBJECT_PATH");
 
 #if HAVE_X11
-    static QHash<QByteArray, xcb_atom_t> s_atoms;
+static QHash<QByteArray, xcb_atom_t> s_atoms;
 #endif
 
 class KDBusMenuImporter : public DBusMenuImporter
@@ -71,6 +71,10 @@ AppMenuModel::AppMenuModel(QObject *parent)
     if (!KWindowSystem::isPlatformX11()) {
         return;
     }
+
+    connect(this, &AppMenuModel::winIdChanged, this, [this] {
+        onActiveWindowChanged(m_winId.toUInt());
+    });
 
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppMenuModel::onActiveWindowChanged);
     connect(KWindowSystem::self()
@@ -182,6 +186,21 @@ void AppMenuModel::setVisible(bool visible)
     }
 }
 
+QVariant AppMenuModel::winId() const
+{
+    return m_winId;
+}
+
+void AppMenuModel::setWinId(const QVariant &id)
+{
+    if (m_winId == id) {
+        return;
+    }
+
+    m_winId = id;
+    emit winIdChanged();
+}
+
 int AppMenuModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
@@ -204,6 +223,11 @@ void AppMenuModel::update()
 void AppMenuModel::onActiveWindowChanged(WId id)
 {
     qApp->removeNativeEventFilter(this);
+
+    if (m_winId!=-1  && m_winId!=id) {
+        //! ignore any other window except the one preferred from plasmoid
+        return;
+    }
 
     if (!id) {
         setMenuAvailable(false);
@@ -272,8 +296,8 @@ void AppMenuModel::onActiveWindowChanged(WId id)
         KWindowInfo info(id, NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
 
         if (info.hasState(NET::SkipTaskbar) ||
-            info.windowType(NET::UtilityMask) == NET::Utility ||
-            info.windowType(NET::DesktopMask) == NET::Desktop) {
+                info.windowType(NET::UtilityMask) == NET::Utility ||
+                info.windowType(NET::DesktopMask) == NET::Desktop) {
 
             //! hide when the windows or their transiet(s) do not have a menu
             if (filterByActive()) {
