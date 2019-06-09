@@ -24,7 +24,7 @@ Item{
 
     property bool hiddenFromBroadcast: false
 
-    readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit
+    readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit && !inEditMode
     readonly property bool menuIsPresent: appMenuModel.visible && appMenuModel.menuAvailable
     readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled
     property bool windowTitleRequestsCooperation: false

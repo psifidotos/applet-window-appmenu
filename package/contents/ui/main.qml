@@ -91,7 +91,7 @@ Item {
         }
     }
 
-    readonly property bool latteInEditMode: latteBridge && latteBridge.inConfigureAppletsMode
+    readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
 
     Broadcaster {
@@ -248,10 +248,10 @@ Item {
                     id: buttonRepeater
                     model: {
                         if (appMenuModel.visible
-                                && appMenuModel.menuAvailable
-                                && !appMenuModel.ignoreWindow
-                                && !broadcaster.hiddenFromBroadcast
-                                && !inEditMode) {
+                                   && appMenuModel.menuAvailable
+                                   && !appMenuModel.ignoreWindow
+                                   && !broadcaster.hiddenFromBroadcast
+                                   && !(inEditMode && !appMenuModel.selectedTracker)) {
                             return appMenuModel;
                         } else if (inEditMode) {
                             return editModeModel;
@@ -321,12 +321,12 @@ Item {
                                              && (!selectedTracker.lastActiveWindow.isValid
                                                  || (plasmoid.configuration.filterByActive && !existsWindowActive))
 
-       // onWinIdChanged: console.log("In Latte with wid appmenu : "+winId);
+        // onWinIdChanged: console.log("In Latte with wid appmenu : "+winId);
 
         readonly property QtObject windowsTracker:latteBridge
-                             && latteBridge.windowsTracker
-                             && latteBridge.windowsTracker.currentScreen.lastActiveWindow
-                             && latteBridge.windowsTracker.allScreens.lastActiveWindow ? latteBridge.windowsTracker : null
+                                                  && latteBridge.windowsTracker
+                                                  && latteBridge.windowsTracker.currentScreen.lastActiveWindow
+                                                  && latteBridge.windowsTracker.allScreens.lastActiveWindow ? latteBridge.windowsTracker : null
 
         readonly property QtObject selectedTracker: {
             if (windowsTracker) {
