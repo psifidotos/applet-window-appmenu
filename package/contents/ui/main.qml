@@ -91,7 +91,7 @@ Item {
         }
     }
 
-    readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
+    readonly property bool latteInEditMode: latteBridge && latteBridge.inConfigureAppletsMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
 
     Broadcaster {
