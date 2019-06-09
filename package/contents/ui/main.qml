@@ -247,7 +247,11 @@ Item {
                 Repeater {
                     id: buttonRepeater
                     model: {
-                        if (appMenuModel.visible && appMenuModel.menuAvailable && !broadcaster.hiddenFromBroadcast && !inEditMode) {
+                        if (appMenuModel.visible
+                                && appMenuModel.menuAvailable
+                                && !appMenuModel.ignoreWindow
+                                && !broadcaster.hiddenFromBroadcast
+                                && !inEditMode) {
                             return appMenuModel;
                         } else if (inEditMode) {
                             return editModeModel;
@@ -310,6 +314,12 @@ Item {
         }
 
         winId: selectedTracker && selectedTracker.lastActiveWindow.isValid ? selectedTracker.lastActiveWindow.winId : -1
+
+        readonly property bool existsWindowActive: !selectedTracker
+                                                   || (selectedTracker && selectedTracker.lastActiveWindow.isValid && !selectedTracker.lastActiveWindow.isMinimized)
+        readonly property bool ignoreWindow: selectedTracker
+                                             && (!selectedTracker.lastActiveWindow.isValid
+                                                 || (plasmoid.configuration.filterByActive && !existsWindowActive))
 
        // onWinIdChanged: console.log("In Latte with wid appmenu : "+winId);
 
