@@ -87,7 +87,7 @@ Item {
         if (latteBridge) {
             latteBridge.actions.setProperty(plasmoid.id, "latteSideColoringEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "activeIndicatorEnabled", false);
-            latteBridge.actions.setProperty(plasmoid.id, "needWindowsTracking", true);
+            latteBridge.actions.setProperty(plasmoid.id, "windowsTrackingEnabled", true);
         }
     }
 
