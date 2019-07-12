@@ -1,5 +1,11 @@
 ### CHANGELOG
 
+#### Version 0.5.0
+
+* show app menus also for inactive windows in multi-screen environment through Latte WindowsTracking v0.9 interface
+* improve appearance when in Latte edit mode
+* use new Latte Communicator API for v0.9
+
 #### Version 0.4.2
 
 * fix a serious crash for some systems when the user was clicking the menu items Plasma or Latte was crashing
