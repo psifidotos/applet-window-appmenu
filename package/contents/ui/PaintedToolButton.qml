@@ -96,6 +96,7 @@ Item {
     Loader{
         id: itemLoader
         anchors.centerIn: parent
+        anchors.fill: parent
 
         active: buttonItem.text !== "" || buttonItem.icon !== ""
         sourceComponent:  buttonItem.text !== "" ? labelComponent : iconComponent
@@ -154,8 +155,11 @@ Item {
         id: labelComponent
         PlasmaComponents.Label{
             id: buttonLbl
+            anchors.fill: parent
 
             textFormat: Text.StyledText
+            horizontalAlignment: Text.AlignHCenter
+
             text: {
                 var text = buttonItem.text;
 
