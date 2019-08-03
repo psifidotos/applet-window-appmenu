@@ -1,5 +1,9 @@
 ### CHANGELOG
 
+#### Version 0.5.1
+
+* fix buttons vertical positioning. Previously there were cases that the buttons had 1px. difference with the surrounding applets
+
 #### Version 0.5.0
 
 * show app menus also for inactive windows in multi-screen environment through Latte WindowsTracking v0.9 interface
