@@ -42,6 +42,8 @@ Item {
     readonly property bool inFullView: !plasmoid.configuration.compactView && plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property bool inCompactView: !inFullView
 
+    readonly property string currentScheme: plasmoid.configuration.selectedScheme
+
     Plasmoid.preferredRepresentation: plasmoid.fullRepresentation
     Plasmoid.status: inFullView ? fullLayout.status : compactLayout.status
 
@@ -84,7 +86,7 @@ Item {
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
 
-    property bool latteSupportsActiveWindowSchemes: false
+    property bool latteSupportsActiveWindowSchemes: plasmoid.configuration.supportsActiveWindowSchemes
     onLatteBridgeChanged: {
         if (latteBridge) {
             latteBridge.actions.setProperty(plasmoid.id, "latteSideColoringEnabled", false);
@@ -92,7 +94,7 @@ Item {
             latteBridge.actions.setProperty(plasmoid.id, "windowsTrackingEnabled", true);
 
             if (latteBridge.version >= latteBridge.actions.version(0,9,4)) {
-                latteSupportsActiveWindowSchemes = true;
+                plasmoid.configuration.supportsActiveWindowSchemes = true;
             }
         }
     }
@@ -110,6 +112,7 @@ Item {
     }
 
     Component.onCompleted: {
+        plasmoid.configuration.supportsActiveWindowSchemes = false;
         plasmoid.configuration.windowTitleIsPresent = false;
         plasmoid.nativeInterface.buttonGrid = buttonGrid;
 
@@ -144,14 +147,24 @@ Item {
     Binding {
         target: plasmoid.nativeInterface
         property: "menuColorScheme"
-        when: plasmoid.nativeInterface
-              && appMenuModel
-              && appMenuModel.selectedTracker
-              && appMenuModel.selectedTracker.lastActiveWindow.isValid
-              && root.latteSupportsActiveWindowSchemes
+        when: plasmoid.nativeInterface && appMenuModel
 
-        /* colorScheme value was added after Latte v0.9.4*/
-        value: appMenuModel.selectedTracker.lastActiveWindow.colorScheme
+        value: {
+            if (root.currentScheme === "_default_") {
+                return "";
+            }
+
+            if (root.currentScheme === "_current_") {
+                if (latteSupportsActiveWindowSchemes) {
+                    /* colorScheme value was added after Latte v0.9.4*/
+                    return appMenuModel.selectedTracker.lastActiveWindow.colorScheme
+                } else {
+                    return "";
+                }
+            }
+
+            return plasmoid.configuration.selectedScheme
+        }
     }
 
     PaintedToolButton {

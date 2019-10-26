@@ -1,6 +1,9 @@
 set(appmenuapplet_SRCS
     appmenumodel.cpp
     appmenuplugin.cpp
+    commontools.cpp
+    schemecolors.cpp
+    schemesmodel.cpp
 )
 
 add_library(appmenuplugin SHARED ${appmenuapplet_SRCS})

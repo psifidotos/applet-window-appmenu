@@ -25,6 +25,8 @@ import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
+import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
+
 Item {
     id: configGeneral
 
@@ -33,14 +35,24 @@ Item {
     property alias cfg_filterByActive: activeChk.checked
     property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
+    property alias cfg_selectedScheme: configGeneral.selectedScheme
     property alias cfg_spacing: spacingSlider.value
     property alias cfg_showWindowTitleOnMouseExit: showWindowTitleChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
+    // used as bridge to communicate properly between configuration and ui
+    property string selectedScheme
+
     // used from the ui
     readonly property real centerFactor: 0.3
     readonly property int minimumWidth: 220
+
+    AppMenuPrivate.SchemesModel {
+        id: schemesModel
+
+        currentOptionIsShown: plasmoid.configuration.supportsActiveWindowSchemes
+    }
 
     ColumnLayout {
         id:mainColumn
@@ -78,6 +90,30 @@ Item {
                 enabled: !disableSetting
                 text: i18n("Use single button for application menu")
                 exclusiveGroup: viewOptionGroup
+            }
+        }
+
+        GridLayout{
+            columns: 2
+
+            Controls.Label {
+                Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+                text: i18n("Menu Colors:")
+                horizontalAlignment: Text.AlignRight
+            }
+
+            ColorsComboBox{
+                id:colorsCmbBox
+                Layout.minimumWidth: 250
+                Layout.preferredWidth: 0.3 * root.width
+                Layout.maximumWidth: 380
+
+                model: schemesModel
+                textRole: "display"
+
+                Component.onCompleted: {
+                    currentIndex = schemesModel.indexOf(plasmoid.configuration.selectedScheme);
+                }
             }
         }
 

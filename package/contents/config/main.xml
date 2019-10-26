@@ -38,6 +38,15 @@
       <default>false</default>
       <label>will become hidden in favour of appmenu when the mouse hovers the applet</label>
     </entry>
+    <entry name="supportsActiveWindowSchemes" type="Bool">
+      <default>false</default>
+      <label>current option will become available in such case</label>
+    </entry>
+    <entry name="selectedScheme" type="String">
+      <default>_default_</default>
+      <label>current scheme used</label>
+    </entry>
+
     <entry name="containmentType" type="Enum">
       <choices>
          <choice name="Loading"/>
