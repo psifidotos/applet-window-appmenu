@@ -83,11 +83,17 @@ Item {
 
     //BEGIN Latte Dock Communicator
     property QtObject latteBridge: null
+
+    property bool latteSupportsActiveWindowSchemes: false
     onLatteBridgeChanged: {
         if (latteBridge) {
             latteBridge.actions.setProperty(plasmoid.id, "latteSideColoringEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "activeIndicatorEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "windowsTrackingEnabled", true);
+
+            if (latteBridge.version >= latteBridge.actions.version(0,9,4)) {
+                latteSupportsActiveWindowSchemes = true;
+            }
         }
     }
 
@@ -133,6 +139,19 @@ Item {
                 compactLayout.clicked();
             }
         });
+    }
+
+    Binding {
+        target: plasmoid.nativeInterface
+        property: "menuColorScheme"
+        when: plasmoid.nativeInterface
+              && appMenuModel
+              && appMenuModel.selectedTracker
+              && appMenuModel.selectedTracker.lastActiveWindow.isValid
+              && root.latteSupportsActiveWindowSchemes
+
+        /* colorScheme value was added after Latte v0.9.4*/
+        value: appMenuModel.selectedTracker.lastActiveWindow.colorScheme
     }
 
     PaintedToolButton {

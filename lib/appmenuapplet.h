@@ -28,6 +28,7 @@
 class QQuickItem;
 class QMenu;
 class AppMenuModel;
+class DecorationPalette;
 
 class AppMenuApplet : public Plasma::Applet
 {
@@ -36,6 +37,8 @@ class AppMenuApplet : public Plasma::Applet
     Q_PROPERTY(int view READ view WRITE setView NOTIFY viewChanged)
 
     Q_PROPERTY(int currentIndex READ currentIndex NOTIFY currentIndexChanged)
+
+    Q_PROPERTY(QString menuColorScheme READ menuColorScheme WRITE setMenuColorScheme NOTIFY menuColorSchemeChanged)
 
     Q_PROPERTY(QQuickItem *buttonGrid READ buttonGrid WRITE setButtonGrid NOTIFY buttonGridChanged)
 
@@ -64,11 +67,15 @@ public:
     int view() const;
     void setView(int type);
 
+    QString menuColorScheme() const;
+    void setMenuColorScheme(const QString &scheme);
+
 signals:
     void modelChanged();
     void viewChanged();
     void currentIndexChanged();
     void buttonGridChanged();
+    void menuColorSchemeChanged();
     void requestActivateIndex(int index);
 
 public slots:
@@ -82,6 +89,8 @@ private:
     void setCurrentIndex(int currentIndex);
     void onMenuAboutToHide();
 
+    QString m_menuColorScheme;
+    QPointer<DecorationPalette> m_decorationPalette;
 
     int m_currentIndex = -1;
     int m_viewType = FullView;

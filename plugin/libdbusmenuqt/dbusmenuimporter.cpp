@@ -550,6 +550,17 @@ void DBusMenuImporter::slotMenuAboutToShow()
     QMenu *menu = qobject_cast<QMenu *>(sender());
     Q_ASSERT(menu);
 
+    //! update colors to sub-menus based on the parent menu colors
+    if (menu && menu->parent()) {
+        QMenu *parent_menu = qobject_cast<QMenu *>(menu->parent()->parent());
+        if (parent_menu) {
+            QMenu *sub_menu = qobject_cast<QMenu *>(menu->parent());
+            if (sub_menu) {
+                menu->setPalette(sub_menu->palette());
+            }
+        }
+    }
+
     updateMenu(menu);
 }
 

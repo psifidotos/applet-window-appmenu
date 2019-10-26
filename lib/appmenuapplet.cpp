@@ -20,6 +20,7 @@
  */
 
 #include "appmenuapplet.h"
+#include "decorationpalette.h"
 #include "../plugin/appmenumodel.h"
 
 #include <QAction>
@@ -127,6 +128,29 @@ void AppMenuApplet::setCurrentIndex(int currentIndex)
     }
 }
 
+QString AppMenuApplet::menuColorScheme() const
+{
+    return m_menuColorScheme;
+}
+
+void AppMenuApplet::setMenuColorScheme(const QString &scheme)
+{
+    if (m_menuColorScheme == scheme) {
+        return;
+    }
+
+    m_menuColorScheme = scheme;
+
+    if (!m_menuColorScheme.isEmpty()) {
+        m_decorationPalette->deleteLater();
+        m_decorationPalette = new DecorationPalette(scheme);\
+    } else {
+        m_decorationPalette->deleteLater();
+    }
+
+    emit menuColorSchemeChanged();
+}
+
 QQuickItem *AppMenuApplet::buttonGrid() const
 {
     return m_buttonGrid;
@@ -164,6 +188,10 @@ QMenu *AppMenuApplet::createMenu(int idx) const
         if (action) {
             menu = action->menu();
         }
+    }
+
+    if (menu && m_decorationPalette) {
+        menu->setPalette(m_decorationPalette->palette());
     }
 
     return menu;
