@@ -36,7 +36,17 @@ Item {
     //! HACK: in order to identify containsMouse correctly at all cases,
     //! best way to reproduce the issue is in Unity mode that many buttons
     //! thought that they containMouse even though they did not
-    property bool containsMouse: inFullView ? buttonGrid.currentIndex === buttonIndex : buttonMouseArea.containsMouse
+    property bool containsMouse: {
+        if (inFullView) {
+            if (plasmoid.nativeInterface.currentIndex > -1) {
+                return plasmoid.nativeInterface.currentIndex === buttonIndex;
+            }
+
+            return buttonGrid.currentIndex === buttonIndex;
+        }
+
+        return buttonMouseArea.containsMouse;
+    }
     readonly property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
     readonly property int shadow: 3
     readonly property int implicitWidth: {
@@ -66,6 +76,12 @@ Item {
     signal clicked;
     signal scrolledUp(int step);
     signal scrolledDown(int step);
+
+    onMenuOpenedChanged: {
+        if (menuOpened) {
+            buttonGrid.currentIndex = buttonIndex
+        }
+    }
 
     Rectangle {
         id: button
@@ -143,7 +159,7 @@ Item {
         //! best way to reproduce the issue is in Unity mode that many buttons
         //! thought that they containMouse even though they did not
         onExited: {
-            if (inFullView) {
+            if (inFullView && buttonGrid.currentIndex === buttonIndex) {
                 buttonGrid.currentIndex = -1;
             }
         }

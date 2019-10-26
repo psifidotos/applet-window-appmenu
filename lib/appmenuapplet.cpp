@@ -53,8 +53,8 @@ AppMenuApplet::AppMenuApplet(QObject *parent, const QVariantList &data)
     //if we're the first, regster the service
     if (s_refs == 1) {
         QDBusConnection::sessionBus().interface()->registerService(viewService(),
-                QDBusConnectionInterface::QueueService,
-                QDBusConnectionInterface::DontAllowReplacement);
+                                                                   QDBusConnectionInterface::QueueService,
+                                                                   QDBusConnectionInterface::DontAllowReplacement);
     }
 
     /*it registers or unregisters the service when the destroyed value of the applet change,
@@ -74,8 +74,8 @@ AppMenuApplet::AppMenuApplet(QObject *parent, const QVariantList &data)
             //if we're the first, regster the service
             if (++s_refs == 1) {
                 QDBusConnection::sessionBus().interface()->registerService(viewService(),
-                        QDBusConnectionInterface::QueueService,
-                        QDBusConnectionInterface::DontAllowReplacement);
+                                                                           QDBusConnectionInterface::QueueService,
+                                                                           QDBusConnectionInterface::DontAllowReplacement);
             }
         }
     });
@@ -334,6 +334,12 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
         }
 
         emit requestActivateIndex(buttonIndex);
+    } else if (event->type() == QEvent::Leave) {
+        if (!m_buttonGrid || !m_buttonGrid->window()) {
+            return false;
+        }
+
+        m_buttonGrid->setProperty("currentIndex", -1);
     }
 
     return false;
