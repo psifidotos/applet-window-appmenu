@@ -9,7 +9,7 @@ Installation
 ### KDE Neon
 
 ```
-sudo apt install make cmake extra-cmake-modules qtdeclarative5-dev libkf5plasma-dev libqt5x11extras5-dev g++ libsm-dev
+sudo apt install make cmake extra-cmake-modules qtdeclarative5-dev libkf5plasma-dev libqt5x11extras5-dev g++ libsm-dev libkf5configwidgets-dev libkdecorations2-dev
 ```
 
 ### openSUSE Leap 15 / Tumbleweed
