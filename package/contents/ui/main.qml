@@ -336,23 +336,23 @@ Item {
 
         Loader {
             active: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
-            sourceComponent: toggleMaximizedMouseArea
-        }
+            anchors.fill: parent
+            sourceComponent: Component {
+                MouseArea {
+                    anchors.right: parent.right
+                    width: parent.width - gridFlickable.contentWidth
+                    height: parent.height
 
-        MouseArea {
-            id: toggleMaximizedMouseArea
-            anchors.right: parent.right
-            width: parent.width - gridFlickable.contentWidth
-            height: parent.height
+                    TaskManager.TasksModel {
+                        id: tasksModel
+                        filterByScreen: plasmoid.configuration.filterByScreen
+                        screenGeometry: plasmoid.screenGeometry
+                    }
 
-            TaskManager.TasksModel {
-                id: tasksModel
-                filterByScreen: plasmoid.configuration.filterByScreen
-                screenGeometry: plasmoid.screenGeometry
-            }
-
-            onDoubleClicked: {
-                tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                    onDoubleClicked: {
+                        tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                    }
+                }
             }
         }
     }
