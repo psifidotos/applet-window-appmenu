@@ -174,7 +174,7 @@ Item {
 
             Controls.CheckBox {
                 id: toggleMaximizedChk
-                text: i18n("Toggle active window maximized on double click")
+                text: i18n("Maximize/restore active window on double click")
                 visible: plasmoid.configuration.containmentType !== 2 /*non-Latte Containment*/
                 enabled: fillWidthChk.checked
             }

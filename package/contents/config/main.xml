@@ -59,7 +59,7 @@
 
     <entry name="toggleMaximizedOnDoubleClick" type="Bool">
       <default>false</default>
-      <label>If true, toggles active window maximized on double click</label>
+      <label>If true, toggles active window maximized/restored on double click</label>
     </entry>
   </group>
 </kcfg>
