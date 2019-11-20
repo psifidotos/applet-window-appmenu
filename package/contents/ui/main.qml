@@ -334,8 +334,13 @@ Item {
             rightIndicatorOpacity: (gridFlickable.contentsExtraSpace - gridFlickable.contentX) / gridFlickable.contentsExtraSpace
         }
 
+        Loader {
+            active: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
+            sourceComponent: toggleMaximizedMouseArea
+        }
+
         MouseArea {
-            enabled: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
+            id: toggleMaximizedMouseArea
             anchors.right: parent.right
             width: parent.width - gridFlickable.contentWidth
             height: parent.height
