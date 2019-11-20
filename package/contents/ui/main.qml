@@ -335,6 +335,7 @@ Item {
         }
 
         MouseArea {
+            enabled: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
             anchors.right: parent.right
             width: parent.width - gridFlickable.contentWidth
             height: parent.height

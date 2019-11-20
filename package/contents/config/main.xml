@@ -56,5 +56,10 @@
       <label>it helps to enable/disable options that are specific to plasma or Latte panels</label>
       <default>0</default>
     </entry>
+
+    <entry name="toggleMaximizedOnDoubleClick" type="Bool">
+      <default>false</default>
+      <label>If true, toggles active window maximized on double click</label>
+    </entry>
   </group>
 </kcfg>
