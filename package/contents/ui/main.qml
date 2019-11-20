@@ -347,6 +347,8 @@ Item {
 
             TaskManager.TasksModel {
                 id: tasksModel
+                filterByScreen: plasmoid.configuration.filterByScreen
+                screenGeometry: plasmoid.screenGeometry
             }
 
             onDoubleClicked: {
