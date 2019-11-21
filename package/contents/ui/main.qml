@@ -334,6 +334,7 @@ Item {
             rightIndicatorOpacity: (gridFlickable.contentsExtraSpace - gridFlickable.contentX) / gridFlickable.contentsExtraSpace
         }
 
+        //This Loader is to support maximize/restore active window for plasma panels. Latte panels are not and should not be influenced by this implementation
         Loader {
             active: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
             anchors.fill: parent
