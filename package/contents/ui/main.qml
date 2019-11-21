@@ -25,6 +25,7 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.kquickcontrolsaddons 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 2.0 as PlasmaComponents
+import org.kde.taskmanager 0.1 as TaskManager
 
 import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
 
@@ -331,6 +332,29 @@ Item {
 
             leftIndicatorOpacity: gridFlickable.contentX / gridFlickable.contentsExtraSpace;
             rightIndicatorOpacity: (gridFlickable.contentsExtraSpace - gridFlickable.contentX) / gridFlickable.contentsExtraSpace
+        }
+
+        //This Loader is to support maximize/restore active window for plasma panels. Latte panels are not and should not be influenced by this implementation
+        Loader {
+            active: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
+            anchors.fill: parent
+            sourceComponent: Component {
+                MouseArea {
+                    anchors.right: parent.right
+                    width: parent.width - gridFlickable.contentWidth
+                    height: parent.height
+
+                    TaskManager.TasksModel {
+                        id: tasksModel
+                        filterByScreen: plasmoid.configuration.filterByScreen
+                        screenGeometry: plasmoid.screenGeometry
+                    }
+
+                    onDoubleClicked: {
+                        tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                    }
+                }
+            }
         }
     }
 

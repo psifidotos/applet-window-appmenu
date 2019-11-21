@@ -38,6 +38,7 @@ Item {
     property alias cfg_selectedScheme: configGeneral.selectedScheme
     property alias cfg_spacing: spacingSlider.value
     property alias cfg_showWindowTitleOnMouseExit: showWindowTitleChk.checked
+    property alias cfg_toggleMaximizedOnDoubleClick: toggleMaximizedChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
@@ -164,6 +165,18 @@ Item {
                 text: i18n("Show Window Title applet on mouse exit")
                 visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
                 enabled: plasmoid.configuration.windowTitleIsPresent
+            }
+
+            Controls.Label {
+                text: ""
+                visible: toggleMaximizedChk.visible
+            }
+
+            Controls.CheckBox {
+                id: toggleMaximizedChk
+                text: i18n("Maximize/restore active window on double click")
+                visible: plasmoid.configuration.containmentType !== 2 /*non-Latte Containment*/
+                enabled: fillWidthChk.checked
             }
         }
 
