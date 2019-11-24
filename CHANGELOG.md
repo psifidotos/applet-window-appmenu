@@ -1,5 +1,11 @@
 ### CHANGELOG
 
+#### Version 0.6.0
+
+* new option to support color schemes for menus. For Latte a new option to colorize the menus based on the current window color scheme is already present.
+* release menu item hovering when not needed any more
+* new option to maximize/restore active window when used in plasma panels [@Taras Fomin]
+
 #### Version 0.5.1
 
 * fix buttons vertical positioning. Previously there were cases that the buttons had 1px. difference with the surrounding applets
