@@ -133,7 +133,10 @@ Item {
             }
         });
 
-        plasmoid.activated.connect(function () {
+        /*
+          // commented in order to avoid to be activated from Latte neutral areas activation
+
+            plasmoid.activated.connect(function () {
             if (inFullView) {
                 var button = buttonRepeater.itemAt(0);
                 if (button) {
@@ -142,7 +145,7 @@ Item {
             } else {
                 compactLayout.clicked();
             }
-        });
+        });*/
     }
 
     Binding {
