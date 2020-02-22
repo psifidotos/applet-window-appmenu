@@ -417,7 +417,7 @@ QVariant AppMenuModel::data(const QModelIndex &index, int role) const
     if (role == MenuRole) { // TODO this should be Qt::DisplayRole
         return actions.at(row)->text();
     } else if (role == ActionRole) {
-        return qVariantFromValue((void *) actions.at(row));
+        return QVariant::fromValue((void *) actions.at(row));
     }
 
     return QVariant();
