@@ -18,6 +18,11 @@ sudo apt install make cmake extra-cmake-modules qtdeclarative5-dev libkf5plasma-
 sudo zypper in -y xrandr cmake make gcc gcc-c++ extra-cmake-modules libqt5-qtbase-devel libqt5-qtdeclarative-devel libKF5WindowSystem5 plasma-framework-devel libSM-devel libqt5-qtx11extras-devel libkdecoration2-devel kconfigwidgets-devel kwidgetsaddons-devel kdeclarative-devel
 ```
 
+### Fedora
+```
+sudo dnf install make cmake extra-cmake-modules qt5-qtdeclarative-devel kf5-plasma-devel qt5-qtx11extras-devel gcc-c++ libSM-devel kf5-kconfigwidgets-devel kdecoration-devel
+```
+
 ### Building and Installing
 
 **Now you can run the installation script.**
