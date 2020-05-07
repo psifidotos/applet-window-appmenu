@@ -233,7 +233,7 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         QTimer::singleShot(0, ctx, ungrabMouseHack);
         //end workaround
 
-        const auto &geo = ctx->window()->screen()->availableVirtualGeometry();
+        const auto &geo = ctx->window()->screen()->geometry();
 
         QPoint pos = ctx->window()->mapToGlobal(ctx->mapToScene(QPointF()).toPoint());
 
