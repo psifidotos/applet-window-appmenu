@@ -85,7 +85,7 @@ Item {
     //END Layout properties
 
     //BEGIN Latte Dock Communicator
-    property QtObject latteBridge: null
+    property Item latteBridge: null
 
     property bool latteSupportsActiveWindowSchemes: plasmoid.configuration.supportsActiveWindowSchemes
     onLatteBridgeChanged: {
