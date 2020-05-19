@@ -33,6 +33,7 @@ Item {
     property alias cfg_compactView: compactViewRadioButton.checked
     property alias cfg_fillWidth: fillWidthChk.checked
     property alias cfg_filterByActive: activeChk.checked
+    property alias cfg_filterByMaximized: maximizedChk.checked
     property alias cfg_filterChildrenWindows: childrenChk.checked
     property alias cfg_filterByScreen: screenAwareChk.checked
     property alias cfg_selectedScheme: configGeneral.selectedScheme
@@ -206,6 +207,13 @@ Item {
             Controls.CheckBox {
                 id: childrenChk
                 text: i18n("Show only menus from main window")
+            }
+
+            Controls.Label{}
+
+            Controls.CheckBox {
+                id: maximizedChk
+                text: i18n("Show only menus from maximized windows")
             }
         }
 

@@ -108,6 +108,46 @@ Item {
     }
     //END  Latte Dock Communicator
 
+    //! make sure that on startup it will always be shown
+    readonly property bool existsWindowActive: (windowInfoLoader.item && windowInfoLoader.item.existsWindowActive)
+                                               || containmentIdentifierTimer.running
+    readonly property bool existsWindowShown: (windowInfoLoader.item && windowInfoLoader.item.existsWindowShown)
+                                              || containmentIdentifierTimer.running
+
+    readonly property bool isLastActiveWindowPinned: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isOnAllDesktops
+    readonly property bool isLastActiveWindowMaximized: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximized
+    readonly property bool isLastActiveWindowKeepAbove: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isKeepAbove
+
+    readonly property bool isLastActiveWindowClosable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isClosable
+    readonly property bool isLastActiveWindowMaximizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMaximizable
+    readonly property bool isLastActiveWindowMinimizable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isMinimizable
+    readonly property bool isLastActiveWindowVirtualDesktopsChangeable: lastActiveTaskItem && existsWindowShown && lastActiveTaskItem.isVirtualDesktopsChangeable
+
+    readonly property Item lastActiveTaskItem: windowInfoLoader.item.lastActiveTaskItem
+
+    Loader {
+        id: windowInfoLoader
+        sourceComponent: latteBridge
+                         && latteBridge.windowsTracker
+                         && latteBridge.windowsTracker.currentScreen.lastActiveWindow
+                         && latteBridge.windowsTracker.allScreens.lastActiveWindow ? latteTrackerComponent : plasmaTasksModel
+
+        Component{
+            id: latteTrackerComponent
+            LatteWindowsTracker{
+                filterByScreen: plasmoid.configuration.filterByScreen
+            }
+        }
+
+        Component{
+            id: plasmaTasksModel
+            PlasmaTasksModel{
+                filterByScreen: plasmoid.configuration.filterByScreen
+            }
+        }
+    }
+    // END Window properties
+
     onViewChanged: {
         plasmoid.nativeInterface.view = view;
     }
@@ -372,27 +412,13 @@ Item {
             plasmoid.nativeInterface.model = appMenuModel
         }
 
-        winId: selectedTracker && selectedTracker.lastActiveWindow.isValid ? selectedTracker.lastActiveWindow.winId : -1
+        winId: latteBridge && lastActiveWindow.isValid ? lastActiveWindow.winId : -1
 
-        readonly property bool existsWindowActive: !selectedTracker
-                                                   || (selectedTracker && selectedTracker.lastActiveWindow.isValid && !selectedTracker.lastActiveWindow.isMinimized)
-        readonly property bool ignoreWindow: selectedTracker
-                                             && (!selectedTracker.lastActiveWindow.isValid
-                                                 || (plasmoid.configuration.filterByActive && !existsWindowActive))
+        readonly property bool ignoreWindow: {
+            var activeFilter = plasmoid.configuration.filterByActive ? !existsWindowActive || !existsWindowShown : false;
+            var maximizedFilter = plasmoid.configuration.filterByMaximized ?  !isLastActiveWindowMaximized : false;
 
-        // onWinIdChanged: console.log("In Latte with wid appmenu : "+winId);
-
-        readonly property QtObject windowsTracker:latteBridge
-                                                  && latteBridge.windowsTracker
-                                                  && latteBridge.windowsTracker.currentScreen.lastActiveWindow
-                                                  && latteBridge.windowsTracker.allScreens.lastActiveWindow ? latteBridge.windowsTracker : null
-
-        readonly property QtObject selectedTracker: {
-            if (windowsTracker) {
-                return plasmoid.configuration.filterByScreen ? windowsTracker.currentScreen : windowsTracker.allScreens;
-            }
-
-            return null;
+            return (activeFilter || maximizedFilter);
         }
     }
 
