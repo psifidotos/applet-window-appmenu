@@ -41,6 +41,8 @@ Item {
         readonly property bool isMaximizable: selectedTracker.lastActiveWindow.hasOwnProperty("isMaximizable") ? selectedTracker.lastActiveWindow.isMaximizable : true
         readonly property bool isVirtualDesktopsChangeable: selectedTracker.lastActiveWindow.hasOwnProperty("isVirtualDesktopsChangeable") ?
                                                                 selectedTracker.lastActiveWindow.isVirtualDesktopsChangeable : true
+
+        readonly property int winId: selectedTracker.lastActiveWindow.hasOwnProperty("winId") ? selectedTracker.lastActiveWindow.winId : -1
     }
 
     function toggleMaximized() {

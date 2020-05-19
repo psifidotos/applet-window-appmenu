@@ -406,13 +406,13 @@ Item {
 
         filterByActive: plasmoid.configuration.filterByActive
         filterChildren: plasmoid.configuration.filterChildrenWindows
-        screenGeometry: plasmoid.configuration.filterByScreen && !selectedTracker ? plasmoid.screenGeometry : Qt.rect(-1, -1, 0, 0) //null geometry
+        screenGeometry: plasmoid.configuration.filterByScreen && !latteBridge ? plasmoid.screenGeometry : Qt.rect(-1, -1, 0, 0) //null geometry
         onRequestActivateIndex: plasmoid.nativeInterface.requestActivateIndex(index)
         Component.onCompleted: {
             plasmoid.nativeInterface.model = appMenuModel
         }
 
-        winId: latteBridge && lastActiveWindow.isValid ? lastActiveWindow.winId : -1
+        winId: latteBridge && existsWindowShown ? lastActiveTaskItem.winId : -1
 
         readonly property bool ignoreWindow: {
             var activeFilter = plasmoid.configuration.filterByActive ? !existsWindowActive || !existsWindowShown : false;
