@@ -25,6 +25,7 @@ Item{
     property bool hiddenFromBroadcast: false
 
     readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit && !inEditMode
+    readonly property bool showWindowTitleInEditMode: plasmoid.configuration.showWindowTitleOnMouseExit && inEditMode
     readonly property bool menuIsPresent: appMenuModel.visible && appMenuModel.menuAvailable
     readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled
     property bool windowTitleRequestsCooperation: false
@@ -65,6 +66,13 @@ Item{
         broadcaster.hiddenFromBroadcast = cooperationEstablished;
     }
 
+    onShowWindowTitleInEditModeChanged: {
+        if (showWindowTitleInEditMode) {
+            //!when the user chooses to enable cooperation in config window
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "activateWindowTitleCooperationFromEditMode", true);
+        }
+    }
+
     Connections {
         target: latteBridge
         onBroadcasted: {
@@ -75,6 +83,8 @@ Item{
                 latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "isPresent", true);
             } else if (action === "setCooperation") {
                 broadcaster.windowTitleRequestsCooperation = value;
+            } else if (action === "activateAppMenuCooperationFromEditMode") {
+                plasmoid.configuration.showWindowTitleOnMouseExit = true;
             }
         }
     }
