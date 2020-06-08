@@ -40,6 +40,7 @@ Item {
     property alias cfg_spacing: spacingSlider.value
     property alias cfg_showWindowTitleOnMouseExit: showWindowTitleChk.checked
     property alias cfg_toggleMaximizedOnDoubleClick: toggleMaximizedChk.checked
+    property alias cfg_toggleMaximizedOnMouseWheel: toggleMaximizedChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
@@ -176,6 +177,18 @@ Item {
             Controls.CheckBox {
                 id: toggleMaximizedChk
                 text: i18n("Maximize/restore active window on double click")
+                visible: plasmoid.configuration.containmentType !== 2 /*non-Latte Containment*/
+                enabled: fillWidthChk.checked
+            }
+
+            Controls.Label {
+                text: ""
+                visible: toggleMouseWheelMaximizedChk.visible
+            }
+
+            Controls.CheckBox {
+                id: toggleMouseWheelMaximizedChk
+                text: i18n("Maximize/restore active window on mouse wheel up/down")
                 visible: plasmoid.configuration.containmentType !== 2 /*non-Latte Containment*/
                 enabled: fillWidthChk.checked
             }
