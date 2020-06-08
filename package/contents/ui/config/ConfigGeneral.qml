@@ -40,7 +40,7 @@ Item {
     property alias cfg_spacing: spacingSlider.value
     property alias cfg_showWindowTitleOnMouseExit: showWindowTitleChk.checked
     property alias cfg_toggleMaximizedOnDoubleClick: toggleMaximizedChk.checked
-    property alias cfg_toggleMaximizedOnMouseWheel: toggleMaximizedChk.checked
+    property alias cfg_toggleMaximizedOnMouseWheel: toggleMouseWheelMaximizedChk.checked
 
     property bool disableSetting: plasmoid.formFactor === PlasmaCore.Types.Vertical
 
