@@ -356,13 +356,13 @@ Item {
 
                         onScrolledUp: {
                             if (gridFlickable.contentsExceed) {
-                                gridFlickable.increaseX(step);
+                                gridFlickable.decreaseX(step);
                             }
                         }
 
                         onScrolledDown: {
                             if (gridFlickable.contentsExceed) {
-                                gridFlickable.decreaseX(step);
+                                gridFlickable.increaseX(step);
                             }
                         }
                     }
