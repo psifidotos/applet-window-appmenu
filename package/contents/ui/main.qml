@@ -379,7 +379,7 @@ Item {
 
         //This Loader is to support maximize/restore active window for plasma panels. Latte panels are not and should not be influenced by this implementation
         Loader {
-            active: plasmoid.configuration.fillWidth && plasmoid.configuration.toggleMaximizedOnDoubleClick && containmentType !== 2
+            active: plasmoid.configuration.fillWidth && (plasmoid.configuration.toggleMaximizedOnDoubleClick || plasmoid.configuration.toggleMaximizedOnMouseWheel) && containmentType !== 2
             anchors.fill: parent
             sourceComponent: Component {
                 MouseArea {
@@ -390,11 +390,24 @@ Item {
                     TaskManager.TasksModel {
                         id: tasksModel
                         filterByScreen: plasmoid.configuration.filterByScreen
-                        screenGeometry: plasmoid.screenGeometry
+                        screenGeometry: plasmoid.screenGeometry        
                     }
 
                     onDoubleClicked: {
-                        tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                        if(plasmoid.configuration.toggleMaximizedOnDoubleClick){
+                            tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                        }         
+                    }
+
+                    onWheel: {
+                        if(plasmoid.configuration.toggleMaximizedOnMouseWheel){
+                            var isMaximized = tasksModel.data(tasksModel.activeTask, TaskManager.AbstractTasksModel.IsMaximized)
+                            if (wheel.angleDelta.y > 0 && !isMaximized) {
+                                tasksModel.requestToggleMaximized(tasksModel.activeTask)           
+                            } else if(wheel.angleDelta.y < 0 && isMaximized){
+                                tasksModel.requestToggleMaximized(tasksModel.activeTask)
+                            }
+                        }       
                     }
                 }
             }

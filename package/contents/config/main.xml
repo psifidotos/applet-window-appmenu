@@ -65,5 +65,9 @@
       <default>false</default>
       <label>If true, toggles active window maximized/restored on double click</label>
     </entry>
+        <entry name="toggleMaximizedOnMouseWheel" type="Bool">
+      <default>false</default>
+      <label>If true, toggles active window maximized/restored on mouse wheel up/down</label>
+    </entry>
   </group>
 </kcfg>
