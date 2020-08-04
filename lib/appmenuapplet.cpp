@@ -44,10 +44,6 @@ QString viewService() { return QStringLiteral("org.kde.kappmenuview"); }
 AppMenuApplet::AppMenuApplet(QObject *parent, const QVariantList &data)
     : Plasma::Applet(parent, data)
 {
-    if (KWindowSystem::isPlatformWayland()) {
-        return;
-    }
-
     ++s_refs;
 
     //if we're the first, regster the service

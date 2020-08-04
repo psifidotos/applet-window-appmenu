@@ -19,15 +19,48 @@
 
 #include "genericwindowmanager.h"
 
+//Qt
+#include <QDebug>
+#include <QModelIndex>
+
+#include <taskmanager/abstracttasksmodel.h>
+
 namespace WM {
 
 GenericWindowManager::GenericWindowManager(QObject *parent)
-    : AbstractWindowManager(parent)
+    : AbstractWindowManager(parent),
+      m_tasksModel(new TaskManager::TasksModel(this))
 {
+    m_tasksModel->setFilterByScreen(true);
+    connect(m_tasksModel, &TaskManager::TasksModel::activeTaskChanged, this, &GenericWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::activityChanged, this, &GenericWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::virtualDesktopChanged, this, &GenericWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::countChanged, this, &GenericWindowManager::onActiveWindowChanged);
+
+    connect(this, &AbstractWindowManager::screenGeometryChanged, this, [this] {
+        m_tasksModel->setScreenGeometry(m_screenGeometry);
+    });
 }
 
 GenericWindowManager::~GenericWindowManager()
 {
+}
+
+void GenericWindowManager::onActiveWindowChanged()
+{
+    const QModelIndex activeTaskIndex = m_tasksModel->activeTask();
+    const QString objectPath = m_tasksModel->data(activeTaskIndex, TaskManager::AbstractTasksModel::ApplicationMenuObjectPath).toString();
+    const QString serviceName = m_tasksModel->data(activeTaskIndex, TaskManager::AbstractTasksModel::ApplicationMenuServiceName).toString();
+
+    if (!objectPath.isEmpty() && !serviceName.isEmpty()) {
+        setMenuAvailable(true);
+        emit applicationMenuChanged(serviceName, objectPath);
+        setVisible(true);
+        emit modelNeedsUpdate();
+    } else {
+        setMenuAvailable(false);
+        setVisible(false);
+    }
 }
 
 }

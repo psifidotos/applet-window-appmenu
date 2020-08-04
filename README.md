@@ -27,12 +27,15 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 - Qt >= 5.9
 - KF5 >= 5.38
 - Plasma >= 5.12
+- plasma-workspace-devel >= 5.19.0 [for wayland support]
 
 **Qt elements**: Quick Widgets DBus
 
 **KF5 elements**: Plasma WindowSystem KDecoration2 extra-cmake-modules
 
 **X11 libraries**: XCB RandR
+
+**Plasma Workspace**: LibTaskManager
 
 # Install
 

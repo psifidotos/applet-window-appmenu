@@ -26,12 +26,8 @@
 #include <config-X11.h>
 
 // local
+#include "wm/genericwindowmanager.h"
 #include "wm/x11fallbackwindowmanager.h"
-
-#if HAVE_X11
-#include <QX11Info>
-#include <xcb/xcb.h>
-#endif
 
 #include <QAction>
 #include <QMenu>
@@ -44,12 +40,6 @@
 
 #include <dbusmenuimporter.h>
 
-static const QByteArray s_x11AppMenuServiceNamePropertyName = QByteArrayLiteral("_KDE_NET_WM_APPMENU_SERVICE_NAME");
-static const QByteArray s_x11AppMenuObjectPathPropertyName = QByteArrayLiteral("_KDE_NET_WM_APPMENU_OBJECT_PATH");
-
-#if HAVE_X11
-static QHash<QByteArray, xcb_atom_t> s_atoms;
-#endif
 
 class KDBusMenuImporter : public DBusMenuImporter
 {
@@ -71,10 +61,6 @@ AppMenuModel::AppMenuModel(QObject *parent)
     : QAbstractListModel(parent),
       m_serviceWatcher(new QDBusServiceWatcher(this))
 {
-    if (!KWindowSystem::isPlatformX11()) {
-        return;
-    }
-
     initWM();
 
     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {
@@ -96,65 +82,87 @@ AppMenuModel::AppMenuModel(QObject *parent)
     });
 }
 
+AppMenuModel::~AppMenuModel()
+{
+    for (const auto &var : m_wmconnections) {
+        QObject::disconnect(var);
+    }
+}
+
 bool AppMenuModel::filterByActive() const
 {
-    return m_wm->filterByActive();
+    return m_wm && m_wm->filterByActive();
 }
 
 void AppMenuModel::setFilterByActive(bool active)
 {
-     m_wm->setFilterByActive(active);
+    if (m_wm) {
+        m_wm->setFilterByActive(active);
+    }
 }
 
 bool AppMenuModel::filterChildren() const
 {
-    return m_wm->filterChildren();
+    return m_wm && m_wm->filterChildren();
 }
 
 void AppMenuModel::setFilterChildren(bool hideChildren)
 {
-    m_wm->setFilterChildren(hideChildren);
+    if (m_wm) {
+        m_wm->setFilterChildren(hideChildren);
+    }
 }
 
 
 bool AppMenuModel::menuAvailable() const
 {
-    return m_wm->menuAvailable();
+    return m_wm && m_wm->menuAvailable();
 }
 
 void AppMenuModel::setMenuAvailable(bool set)
 {
-    return m_wm->setMenuAvailable(set);
+    if (m_wm) {
+        m_wm->setMenuAvailable(set);
+    }
 }
 
 QRect AppMenuModel::screenGeometry() const
 {
-    return m_wm->screenGeometry();
+    return m_wm ? m_wm->screenGeometry() : QRect();
 }
 
 void AppMenuModel::setScreenGeometry(QRect geometry)
 {
-    m_wm->setScreenGeometry(geometry);
+    if (m_wm) {
+        m_wm->setScreenGeometry(geometry);
+    }
 }
 
 bool AppMenuModel::visible() const
 {
-    return m_wm->visible();
+    return m_wm && m_wm->visible();
 }
 
 QVariant AppMenuModel::winId() const
 {
-    return m_wm->winId();
+    return m_wm ? m_wm->winId() : -1;
 }
 
 void AppMenuModel::setWinId(const QVariant &id)
 {
-    m_wm->setWinId(id);
+    if (m_wm) {
+        m_wm->setWinId(id);
+    }
 }
 
 void AppMenuModel::initWM()
 {
-    m_wm = new WM::X11FallbackWindowManager(this);
+
+    if (KWindowSystem::isPlatformX11()) {
+        m_wm = new WM::X11FallbackWindowManager(this);
+    } else {
+        m_wm = new WM::GenericWindowManager(this);
+    }
 
     m_wmconnections << connect(m_wm, &WM::AbstractWindowManager::modelNeedsUpdate, this, &AppMenuModel::modelNeedsUpdate);
     m_wmconnections << connect(m_wm, &WM::AbstractWindowManager::applicationMenuChanged, this, &AppMenuModel::updateApplicationMenu);
@@ -172,7 +180,7 @@ int AppMenuModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
-    if (!m_wm->menuAvailable() || !m_menu) {
+    if (!m_wm || !m_wm->menuAvailable() || !m_menu) {
         return 0;
     }
 
@@ -198,7 +206,7 @@ QVariant AppMenuModel::data(const QModelIndex &index, int role) const
 {
     const int row = index.row();
 
-    if (row < 0 || !m_wm->menuAvailable() || !m_menu) {
+    if (row < 0 || !m_wm || !m_wm->menuAvailable() || !m_menu) {
         return QVariant();
     }
 
@@ -250,7 +258,7 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
         for (QAction *a : m_menu->actions()) {
             // signal dataChanged when the action changes
             connect(a, &QAction::changed, this, [this, a] {
-                if (m_wm->menuAvailable() && m_menu)
+                if (m_wm && m_wm->menuAvailable() && m_menu)
                 {
                     const int actionIdx = m_menu->actions().indexOf(a);
 
@@ -274,7 +282,7 @@ void AppMenuModel::updateApplicationMenu(const QString &serviceName, const QStri
 
     connect(m_importer.data(), &DBusMenuImporter::actionActivationRequested, this, [this](QAction * action) {
         // TODO submenus
-        if (!m_wm->menuAvailable() || !m_menu) {
+        if (!m_wm || !m_wm->menuAvailable() || !m_menu) {
             return;
         }
 

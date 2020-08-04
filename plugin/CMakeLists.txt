@@ -22,6 +22,7 @@ target_link_libraries(appmenuplugin
                       Qt5::Quick
                       KF5::Plasma
                       KF5::WindowSystem
+                      PW::LibTaskManager
                       dbusmenuqt)
 
 # load X11 libraries

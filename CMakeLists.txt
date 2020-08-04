@@ -18,6 +18,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Quick Widgets DBus)
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Plasma WindowSystem ConfigWidgets)
 find_package(KDecoration2 REQUIRED)
+find_package(LibTaskManager REQUIRED)
 
 include(ECMQtDeclareLoggingCategory)
 include(KDECMakeSettings)

@@ -52,6 +52,7 @@ class AppMenuModel : public QAbstractListModel
     Q_PROPERTY(QVariant winId READ winId WRITE setWinId NOTIFY winIdChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
+    ~AppMenuModel() override;
 
     enum AppMenuRole
     {
@@ -104,7 +105,7 @@ private:
 private:
     bool m_updatePending = false;
 
-    WM::AbstractWindowManager *m_wm{nullptr};
+    QPointer<WM::AbstractWindowManager> m_wm;
     QList<QMetaObject::Connection> m_wmconnections;
 
     QPointer<QMenu> m_menu;

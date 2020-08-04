@@ -26,6 +26,9 @@
 //Qt
 #include <QObject>
 
+// Plasma TaskManager
+#include <taskmanager/tasksmodel.h>
+
 namespace WM {
 
 class GenericWindowManager : public AbstractWindowManager
@@ -35,6 +38,13 @@ class GenericWindowManager : public AbstractWindowManager
 public:
     explicit GenericWindowManager(QObject *parent = nullptr);
     ~GenericWindowManager() override;
+
+private slots:
+    void onActiveWindowChanged();
+
+private:
+    TaskManager::TasksModel* m_tasksModel;
+
 };
 
 }
