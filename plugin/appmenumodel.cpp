@@ -25,6 +25,9 @@
 
 #include <config-X11.h>
 
+// local
+#include "wm/x11fallbackwindowmanager.h"
+
 #if HAVE_X11
 #include <QX11Info>
 #include <xcb/xcb.h>
@@ -71,6 +74,8 @@ AppMenuModel::AppMenuModel(QObject *parent)
     if (!KWindowSystem::isPlatformX11()) {
         return;
     }
+
+    m_wm = new WM::X11FallbackWindowManager(this);
 
     connect(this, &AppMenuModel::winIdChanged, this, [this] {
         onActiveWindowChanged(m_winId.toUInt());

@@ -4,6 +4,9 @@ set(appmenuapplet_SRCS
     commontools.cpp
     schemecolors.cpp
     schemesmodel.cpp
+    wm/abstractwindowmanager.cpp
+    wm/genericwindowmanager.cpp
+    wm/x11fallbackwindowmanager.cpp
 )
 
 add_library(appmenuplugin SHARED ${appmenuapplet_SRCS})

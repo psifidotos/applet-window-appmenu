@@ -22,6 +22,9 @@
 #ifndef APPMENUMODEL_H
 #define APPMENUMODEL_H
 
+//! local
+#include "wm/abstractwindowmanager.h"
+
 #include <QAbstractListModel>
 #include <QAbstractNativeEventFilter>
 #include <QStringList>
@@ -123,6 +126,9 @@ private:
     WId m_currentWindowId = 0;
     //! window that its menu initialization may be delayed
     WId m_delayedMenuWindowId = 0;
+
+
+    WM::AbstractWindowManager *m_wm{nullptr};
 
     QPointer<QMenu> m_menu;
 
