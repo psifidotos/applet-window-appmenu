@@ -65,6 +65,10 @@ X11FallbackWindowManager::X11FallbackWindowManager(QObject *parent)
         onWindowChanged(m_currentWindowId.toUInt());
     });
 
+    connect(this, &AbstractWindowManager::menuAvailableChanged, this, [this] {
+        onWindowChanged(m_currentWindowId.toUInt());
+    });
+
     onActiveWindowChanged(KWindowSystem::activeWindow());
 
 }

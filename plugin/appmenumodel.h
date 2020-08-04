@@ -26,7 +26,6 @@
 #include "wm/abstractwindowmanager.h"
 
 #include <QAbstractListModel>
-#include <QAbstractNativeEventFilter>
 #include <QStringList>
 #include <KWindowSystem>
 #include <QPointer>
@@ -38,7 +37,7 @@ class QModelIndex;
 class QDBusServiceWatcher;
 class KDBusMenuImporter;
 
-class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilter
+class AppMenuModel : public QAbstractListModel
 {
     Q_OBJECT
 
@@ -53,7 +52,6 @@ class AppMenuModel : public QAbstractListModel, public QAbstractNativeEventFilte
     Q_PROPERTY(QVariant winId READ winId WRITE setWinId NOTIFY winIdChanged)
 public:
     explicit AppMenuModel(QObject *parent = nullptr);
-    ~AppMenuModel() override;
 
     enum AppMenuRole
     {
@@ -64,8 +62,6 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QHash<int, QByteArray> roleNames() const override;
-
-    void updateApplicationMenu(const QString &serviceName, const QString &menuObjectPath);
 
     bool filterByActive() const;
     void setFilterByActive(bool active);
@@ -87,19 +83,10 @@ public:
 signals:
     void requestActivateIndex(int index);
 
-protected:
-    bool nativeEventFilter(const QByteArray &eventType, void *message, long int *result) override;
+public slots:
+    void updateApplicationMenu(const QString &serviceName, const QString &menuObjectPath);
 
 private Q_SLOTS:
-    void onActiveWindowChanged(WId id);
-    void onWindowChanged(WId id);
-    //! there are apps that are not releasing their menu properly after closing
-    //! and as such their menu is still shown even though the app does not exist
-    //! any more. Such apps are Java based e.g. smartgit
-    void onWindowRemoved(WId id);
-    void filterWindow(KWindowInfo &info);
-
-    void setVisible(bool visible);
     void update();
 
 signals:
@@ -112,23 +99,13 @@ signals:
     void winIdChanged();
 
 private:
-    bool m_filterByActive = false;
-    bool m_filterChildren = false;
-    bool m_menuAvailable;
+    void initWM();
+
+private:
     bool m_updatePending = false;
-    bool m_visible = true;
-
-    QRect m_screenGeometry;
-
-    QVariant m_winId{-1};
-
-    //! current active window used
-    WId m_currentWindowId = 0;
-    //! window that its menu initialization may be delayed
-    WId m_delayedMenuWindowId = 0;
-
 
     WM::AbstractWindowManager *m_wm{nullptr};
+    QList<QMetaObject::Connection> m_wmconnections;
 
     QPointer<QMenu> m_menu;
 
