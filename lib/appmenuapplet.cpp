@@ -20,6 +20,8 @@
  */
 
 #include "appmenuapplet.h"
+#include <config-appmenu.h>
+
 #include "decorationpalette.h"
 #include "../plugin/appmenumodel.h"
 
@@ -44,6 +46,13 @@ QString viewService() { return QStringLiteral("org.kde.kappmenuview"); }
 AppMenuApplet::AppMenuApplet(QObject *parent, const QVariantList &data)
     : Plasma::Applet(parent, data)
 {
+#if LibTaskManager_CURRENTMINOR_VERSION < 19 /*5.19*/
+    // Disable for Plasma Desktop < 5.19
+    if (KWindowSystem::isPlatformWayland()) {
+        return;
+    }
+#endif
+
     ++s_refs;
 
     //if we're the first, regster the service

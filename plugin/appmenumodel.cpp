@@ -22,23 +22,24 @@
  ******************************************************************/
 
 #include "appmenumodel.h"
-
 #include <config-appmenu.h>
+#include <dbusmenuimporter.h>
 
 // local
 #include "wm/genericwindowmanager.h"
 #include "wm/x11fallbackwindowmanager.h"
 
+// Qt
 #include <QAction>
+#include <QDebug>
 #include <QMenu>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusServiceWatcher>
 #include <QGuiApplication>
 
-#include <QDebug>
-
-#include <dbusmenuimporter.h>
+// KDE
+#include <KWindowSystem>
 
 
 class KDBusMenuImporter : public DBusMenuImporter
@@ -61,6 +62,13 @@ AppMenuModel::AppMenuModel(QObject *parent)
     : QAbstractListModel(parent),
       m_serviceWatcher(new QDBusServiceWatcher(this))
 {
+#if LibTaskManager_CURRENTMINOR_VERSION < 19
+    // Disable for Plasma Desktop < 5.19
+    if (KWindowSystem::isPlatformWayland()) {
+        return;
+    }
+#endif
+
     initWM();
 
     connect(this, &AppMenuModel::modelNeedsUpdate, this, [this] {

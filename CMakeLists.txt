@@ -18,7 +18,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Quick Widgets DBus)
 find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS Plasma WindowSystem ConfigWidgets)
 find_package(KDecoration2 REQUIRED)
-find_package(LibTaskManager REQUIRED)
+find_package(LibTaskManager)
 
 include(ECMQtDeclareLoggingCategory)
 include(KDECMakeSettings)
@@ -44,6 +44,25 @@ endif()
 if(X11_FOUND AND XCB_XCB_FOUND)
   set(HAVE_X11 ON)
 endif()
+
+#discover KF5 version
+string(REGEX MATCH "\\.([^]]+)\\." KF5_CURRENTMINOR_VERSION ${KF5_VERSION})
+string(REGEX REPLACE "\\." "" KF5_CURRENTMINOR_VERSION ${KF5_CURRENTMINOR_VERSION})
+
+message(STATUS "KF5 VERSION : ${KF5_VERSION}")
+message(STATUS "KF5 VERSION CURRENT MINOR : ${KF5_CURRENTMINOR_VERSION}")
+
+if(LibTaskManager_FOUND)
+    #discover Plasma LibTaskManager version
+    string(REGEX MATCH "\\.([^]]+)\\." LibTaskManager_CURRENTMINOR_VERSION ${LibTaskManager_VERSION})
+    string(REGEX REPLACE "\\." "" LibTaskManager_CURRENTMINOR_VERSION ${LibTaskManager_CURRENTMINOR_VERSION})
+    message(STATUS "LibTaskManager VERSION : ${LibTaskManager_VERSION}")
+else()
+    #initialize to not found
+    set(LibTaskManager_CURRENTMINOR_VERSION -1)
+endif()
+
+message(STATUS "LibTaskManager CURRENT VERSION : ${LibTaskManager_CURRENTMINOR_VERSION}")
 
 configure_file(config-appmenu.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/plugin/config-appmenu.h)
 configure_file(config-appmenu.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/lib/config-appmenu.h)
