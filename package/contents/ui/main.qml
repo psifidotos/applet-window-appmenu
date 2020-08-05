@@ -318,7 +318,7 @@ Item {
                 }
 
                 readonly property bool containsMouse: {
-                    if (plasmoid.nativeInterface.currentIndex>=0 || fullViewBackMousearea.containsMouse) {
+                    if (currentIndex>=0 || fullViewBackMousearea.containsMouse) {
                         return true;
                     }
 

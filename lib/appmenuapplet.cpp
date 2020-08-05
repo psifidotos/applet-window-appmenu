@@ -337,30 +337,32 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
             return true;
         }
 
-    } else if (event->type() == QEvent::MouseMove && KWindowSystem::isPlatformX11()) {
-        auto *e = static_cast<QMouseEvent *>(event);
+    } else if (event->type() == QEvent::MouseMove) {
+        if (KWindowSystem::isPlatformX11()) {
+            auto *e = static_cast<QMouseEvent *>(event);
 
-        if (!m_buttonGrid || !m_buttonGrid->window()) {
-            return false;
+            if (!m_buttonGrid || !m_buttonGrid->window()) {
+                return false;
+            }
+
+            // FIXME the panel margin breaks Fitt's law :(
+            const QPointF &windowLocalPos = m_buttonGrid->window()->mapFromGlobal(e->globalPos());
+            const QPointF &buttonGridLocalPos = m_buttonGrid->mapFromScene(windowLocalPos);
+            auto *item = m_buttonGrid->childAt(buttonGridLocalPos.x(), buttonGridLocalPos.y());
+
+            if (!item) {
+                return false;
+            }
+
+            bool ok;
+            const int buttonIndex = item->property("buttonIndex").toInt(&ok);
+
+            if (!ok) {
+                return false;
+            }
+
+            emit requestActivateIndex(buttonIndex);
         }
-
-        // FIXME the panel margin breaks Fitt's law :(
-        const QPointF &windowLocalPos = m_buttonGrid->window()->mapFromGlobal(e->globalPos());
-        const QPointF &buttonGridLocalPos = m_buttonGrid->mapFromScene(windowLocalPos);
-        auto *item = m_buttonGrid->childAt(buttonGridLocalPos.x(), buttonGridLocalPos.y());
-
-        if (!item) {
-            return false;
-        }
-
-        bool ok;
-        const int buttonIndex = item->property("buttonIndex").toInt(&ok);
-
-        if (!ok) {
-            return false;
-        }
-
-        emit requestActivateIndex(buttonIndex);
     } else if (event->type() == QEvent::Leave) {
         if (!m_buttonGrid || !m_buttonGrid->window()) {
             return false;
