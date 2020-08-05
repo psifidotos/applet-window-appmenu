@@ -216,7 +216,6 @@ void X11FallbackWindowManager::onActiveWindowChanged(WId id)
         m_currentWindowId = id;
 
         if (!filterChildren()) {
-
             KWindowInfo transientInfo = KWindowInfo(info.transientFor(), NET::WMState | NET::WMWindowType | NET::WMGeometry, NET::WM2TransientFor);
 
             // look at transient windows first

@@ -25,6 +25,12 @@
 
 //Qt
 #include <QObject>
+#include <QPointer>
+#include <QTimer>
+
+// KDE
+#include <KWayland/Client/plasmashell.h>
+#include <KWayland/Client/plasmawindowmanagement.h>
 
 // Plasma TaskManager
 #include <taskmanager/tasksmodel.h>
@@ -41,10 +47,25 @@ public:
 
 private slots:
     void onActiveWindowChanged();
+    void onDelayedTimerTriggered();
+    void onWinIdChanged();
 
 private:
-    TaskManager::TasksModel* m_tasksModel;
+    void setupWaylandIntegration();
+    void validateApplicationMenu(const QString &objectPath, const QString &serviceName);
 
+
+    KWayland::Client::PlasmaWindow *windowFor(QVariant wid);
+
+private:
+    //! window that its menu initialization may be delayed
+    QVariant m_delayedMenuWindowId{-1};
+    QTimer m_delayedApplicationMenuTimer;
+
+    KWayland::Client::PlasmaShell *m_waylandShell{nullptr};
+    QPointer<KWayland::Client::PlasmaWindowManagement> m_windowManagement;
+
+    TaskManager::TasksModel* m_tasksModel;
 };
 
 }
