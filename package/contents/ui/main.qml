@@ -308,6 +308,11 @@ Item {
 
                 onCurrentIndexChanged: {
                     if (currentIndex >= 0 && plasmoid.nativeInterface.menuIsShown) {
+                        //! as it appears this codepath when triggered from buttons entering under x11
+                        //! does not work because the shown menu gets the grabber. So under
+                        //! x11 the applet event filter is responsible for buttons hovering
+                        //! to trigger menus showing but for wayland the qml painted buttons
+                        //! take up the task
                         plasmoid.nativeInterface.requestActivateIndex(currentIndex);
                     }
                 }

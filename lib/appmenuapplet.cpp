@@ -320,8 +320,8 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
             return true;
         }
 
-    } else if (event->type() == QEvent::MouseMove) {
-      /*  auto *e = static_cast<QMouseEvent *>(event);
+    } else if (event->type() == QEvent::MouseMove && KWindowSystem::isPlatformX11()) {
+        auto *e = static_cast<QMouseEvent *>(event);
 
         if (!m_buttonGrid || !m_buttonGrid->window()) {
             return false;
@@ -343,7 +343,7 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
             return false;
         }
 
-        emit requestActivateIndex(buttonIndex);*/
+        emit requestActivateIndex(buttonIndex);
     } else if (event->type() == QEvent::Leave) {
         if (!m_buttonGrid || !m_buttonGrid->window()) {
             return false;
