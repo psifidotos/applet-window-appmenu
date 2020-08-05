@@ -120,11 +120,13 @@ void WaylandWindowManager::onActiveWindowChanged()
         return;
     }
 
+#if LibTaskManager_CURRENTMINOR_VERSION >= 19
     const QModelIndex activeTaskIndex = m_tasksModel->activeTask();
     const QString objectPath = m_tasksModel->data(activeTaskIndex, TaskManager::AbstractTasksModel::ApplicationMenuObjectPath).toString();
     const QString serviceName = m_tasksModel->data(activeTaskIndex, TaskManager::AbstractTasksModel::ApplicationMenuServiceName).toString();
 
     validateApplicationMenu(objectPath, serviceName);
+#endif
 }
 
 void WaylandWindowManager::onWinIdChanged()
@@ -133,6 +135,7 @@ void WaylandWindowManager::onWinIdChanged()
         return;
     }
 
+#if KF5_CURRENTMINOR_VERSION >= 69
     auto window = windowFor(m_userWindowId);
 
     if (window) {
@@ -141,6 +144,7 @@ void WaylandWindowManager::onWinIdChanged()
 
         validateApplicationMenu(objectPath, serviceName);
     }
+#endif
 }
 
 void WaylandWindowManager::validateApplicationMenu(const QString &objectPath, const QString &serviceName)
