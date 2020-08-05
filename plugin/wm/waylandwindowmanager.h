@@ -17,8 +17,8 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GENERICWINDOWMANAGER_H
-#define GENERICWINDOWMANAGER_H
+#ifndef WAYLANDWINDOWMANAGER_H
+#define WAYLANDWINDOWMANAGER_H
 
 //local
 #include "abstractwindowmanager.h"
@@ -31,13 +31,13 @@
 
 namespace WM {
 
-class GenericWindowManager : public AbstractWindowManager
+class WaylandWindowManager : public AbstractWindowManager
 {
     Q_OBJECT
 
 public:
-    explicit GenericWindowManager(QObject *parent = nullptr);
-    ~GenericWindowManager() override;
+    explicit WaylandWindowManager(QObject *parent = nullptr);
+    ~WaylandWindowManager() override;
 
 private slots:
     void onActiveWindowChanged();

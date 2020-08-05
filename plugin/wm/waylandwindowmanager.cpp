@@ -17,7 +17,7 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "genericwindowmanager.h"
+#include "waylandwindowmanager.h"
 
 //Qt
 #include <QDebug>
@@ -27,26 +27,26 @@
 
 namespace WM {
 
-GenericWindowManager::GenericWindowManager(QObject *parent)
+WaylandWindowManager::WaylandWindowManager(QObject *parent)
     : AbstractWindowManager(parent),
       m_tasksModel(new TaskManager::TasksModel(this))
 {
     m_tasksModel->setFilterByScreen(true);
-    connect(m_tasksModel, &TaskManager::TasksModel::activeTaskChanged, this, &GenericWindowManager::onActiveWindowChanged);
-    connect(m_tasksModel, &TaskManager::TasksModel::activityChanged, this, &GenericWindowManager::onActiveWindowChanged);
-    connect(m_tasksModel, &TaskManager::TasksModel::virtualDesktopChanged, this, &GenericWindowManager::onActiveWindowChanged);
-    connect(m_tasksModel, &TaskManager::TasksModel::countChanged, this, &GenericWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::activeTaskChanged, this, &WaylandWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::activityChanged, this, &WaylandWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::virtualDesktopChanged, this, &WaylandWindowManager::onActiveWindowChanged);
+    connect(m_tasksModel, &TaskManager::TasksModel::countChanged, this, &WaylandWindowManager::onActiveWindowChanged);
 
     connect(this, &AbstractWindowManager::screenGeometryChanged, this, [this] {
         m_tasksModel->setScreenGeometry(m_screenGeometry);
     });
 }
 
-GenericWindowManager::~GenericWindowManager()
+WaylandWindowManager::~WaylandWindowManager()
 {
 }
 
-void GenericWindowManager::onActiveWindowChanged()
+void WaylandWindowManager::onActiveWindowChanged()
 {
     const QModelIndex activeTaskIndex = m_tasksModel->activeTask();
     const QString objectPath = m_tasksModel->data(activeTaskIndex, TaskManager::AbstractTasksModel::ApplicationMenuObjectPath).toString();

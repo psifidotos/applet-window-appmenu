@@ -26,7 +26,7 @@
 #include <dbusmenuimporter.h>
 
 // local
-#include "wm/genericwindowmanager.h"
+#include "wm/waylandwindowmanager.h"
 #include "wm/x11fallbackwindowmanager.h"
 
 // Qt
@@ -169,7 +169,7 @@ void AppMenuModel::initWM()
     if (KWindowSystem::isPlatformX11()) {
         m_wm = new WM::X11FallbackWindowManager(this);
     } else {
-        m_wm = new WM::GenericWindowManager(this);
+        m_wm = new WM::WaylandWindowManager(this);
     }
 
     m_wmconnections << connect(m_wm, &WM::AbstractWindowManager::modelNeedsUpdate, this, &AppMenuModel::modelNeedsUpdate);
