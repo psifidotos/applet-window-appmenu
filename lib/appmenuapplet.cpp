@@ -197,6 +197,14 @@ void AppMenuApplet::onMenuAboutToHide()
 {
     m_menuVisible = false;
     setCurrentIndex(-1);
+
+    //! Workaround: Send a fake QEvent::Leave to inform grid buttons for mouse leaving the view.
+    //! This is needed because after triggering menus through hovering over them when the user clicks
+    //! far from menus, the menus deactivate but for some reason an Enter event is sent and for that
+    //! reason a button think that containsMouse. Without that workaround the experience
+    //! is a bit broken because there case that buttons appear hovered without really be hovered.
+    QHoverEvent e(QEvent::Leave, QPoint(-5,-5),  QPoint(2, 2));
+    QCoreApplication::instance()->sendEvent(m_currentMenu->windowHandle()->transientParent(), &e);
 }
 
 bool AppMenuApplet::menuIsShown() const
