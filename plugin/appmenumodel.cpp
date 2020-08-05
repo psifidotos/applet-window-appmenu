@@ -23,7 +23,7 @@
 
 #include "appmenumodel.h"
 
-#include <config-X11.h>
+#include <config-appmenu.h>
 
 // local
 #include "wm/genericwindowmanager.h"

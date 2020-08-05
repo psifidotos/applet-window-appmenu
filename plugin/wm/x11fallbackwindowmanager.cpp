@@ -19,7 +19,7 @@
 
 #include "x11fallbackwindowmanager.h"
 
-#include <config-X11.h>
+#include <config-appmenu.h>
 
 #if HAVE_X11
 #include <QX11Info>
