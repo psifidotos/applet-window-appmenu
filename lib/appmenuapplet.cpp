@@ -225,14 +225,18 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         // this causes the next click to go missing
 
         //by releasing manually we avoid that situation
-        auto ungrabMouseHack = [ctx]() {
-            if (ctx && ctx->window() && ctx->window()->mouseGrabberItem()) {
-                // FIXME event forge thing enters press and hold move mode :/
-                ctx->window()->mouseGrabberItem()->ungrabMouse();
-            }
-        };
 
-        QTimer::singleShot(0, ctx, ungrabMouseHack);
+        if (KWindowSystem::isPlatformX11()) {
+            //! Under wayland is not needed
+            auto ungrabMouseHack = [ctx]() {
+                if (ctx && ctx->window() && ctx->window()->mouseGrabberItem()) {
+                    // FIXME event forge thing enters press and hold move mode :/
+                    ctx->window()->mouseGrabberItem()->ungrabMouse();
+                }
+            };
+
+            QTimer::singleShot(0, ctx, ungrabMouseHack);
+        }
         //end workaround
 
         const auto &geo = ctx->window()->screen()->geometry();
@@ -247,14 +251,6 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
                      qBound(geo.y(), pos.y(), geo.y() + geo.height() - actionMenu->height()));
 
         if (view() == FullView) {
-            actionMenu->installEventFilter(this);
-        }
-
-        actionMenu->winId();//create window handle
-        actionMenu->windowHandle()->setTransientParent(ctx->window());       
-        actionMenu->popup(pos);
-
-        if (view() == FullView) {
             // hide the old menu only after showing the new one to avoid brief flickering
             // in other windows as they briefly re-gain focus
             QMenu *oldMenu = m_currentMenu;
@@ -266,6 +262,17 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
                 disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
                 oldMenu->hide();
             }
+        }
+
+        //! Hiding the old menu before showing the new one is needed by wayland.
+        //! Without that code reordering half of menus in wayland are not shown
+        //! at all and wayland is complaining
+        actionMenu->winId();//create window handle
+        actionMenu->windowHandle()->setTransientParent(ctx->window());
+        actionMenu->popup(pos);
+
+        if (view() == FullView) {
+            actionMenu->installEventFilter(this);
         }
 
         setCurrentIndex(idx);
