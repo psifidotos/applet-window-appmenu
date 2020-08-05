@@ -306,6 +306,12 @@ Item {
 
                 property int currentIndex: -1
 
+                onCurrentIndexChanged: {
+                    if (currentIndex >= 0 && plasmoid.nativeInterface.menuIsShown) {
+                        plasmoid.nativeInterface.requestActivateIndex(currentIndex);
+                    }
+                }
+
                 readonly property bool containsMouse: {
                     if (plasmoid.nativeInterface.currentIndex>=0 || fullViewBackMousearea.containsMouse) {
                         return true;

@@ -34,6 +34,8 @@ class AppMenuApplet : public Plasma::Applet
 {
     Q_OBJECT
 
+    Q_PROPERTY(bool menuIsShown READ menuIsShown NOTIFY menuIsShownChanged)
+
     Q_PROPERTY(int view READ view WRITE setView NOTIFY viewChanged)
 
     Q_PROPERTY(int currentIndex READ currentIndex NOTIFY currentIndexChanged)
@@ -56,6 +58,8 @@ public:
 
     void init() override;
 
+    bool menuIsShown() const;
+
     int currentIndex() const;
 
     QQuickItem *buttonGrid() const;
@@ -71,6 +75,7 @@ public:
     void setMenuColorScheme(const QString &scheme);
 
 signals:
+    void menuIsShownChanged();
     void modelChanged();
     void viewChanged();
     void currentIndexChanged();
@@ -91,6 +96,8 @@ private:
 
     QString m_menuColorScheme;
     QPointer<DecorationPalette> m_decorationPalette;
+
+    bool m_menuVisible{false};
 
     int m_currentIndex = -1;
     int m_viewType = FullView;

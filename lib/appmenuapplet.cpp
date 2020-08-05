@@ -195,7 +195,13 @@ QMenu *AppMenuApplet::createMenu(int idx) const
 
 void AppMenuApplet::onMenuAboutToHide()
 {
+    m_menuVisible = false;
     setCurrentIndex(-1);
+}
+
+bool AppMenuApplet::menuIsShown() const
+{
+    return m_currentMenu && m_menuVisible;
 }
 
 void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
@@ -237,8 +243,6 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
             pos.setY(pos.y() + ctx->height());
         }
 
-        actionMenu->adjustSize();
-
         pos = QPoint(qBound(geo.x(), pos.x(), geo.x() + geo.width() - actionMenu->width()),
                      qBound(geo.y(), pos.y(), geo.y() + geo.height() - actionMenu->height()));
 
@@ -247,8 +251,7 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         }
 
         actionMenu->winId();//create window handle
-        actionMenu->windowHandle()->setTransientParent(ctx->window());
-
+        actionMenu->windowHandle()->setTransientParent(ctx->window());       
         actionMenu->popup(pos);
 
         if (view() == FullView) {
@@ -260,14 +263,18 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
             if (oldMenu && oldMenu != actionMenu) {
                 //don't initialize the currentIndex when another menu is already shown
                 disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
+                disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
                 oldMenu->hide();
             }
         }
 
         setCurrentIndex(idx);
+        m_menuVisible = true;
 
         // FIXME TODO connect only once
         connect(actionMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide, Qt::UniqueConnection);
+
+        emit menuIsShownChanged();
     } else { // is it just an action without a menu?
         const QVariant data = m_model->index(idx, 0).data(AppMenuModel::ActionRole);
         QAction *action = static_cast<QAction *>(data.value<void *>());
@@ -307,7 +314,7 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
         }
 
     } else if (event->type() == QEvent::MouseMove) {
-        auto *e = static_cast<QMouseEvent *>(event);
+      /*  auto *e = static_cast<QMouseEvent *>(event);
 
         if (!m_buttonGrid || !m_buttonGrid->window()) {
             return false;
@@ -329,7 +336,7 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
             return false;
         }
 
-        emit requestActivateIndex(buttonIndex);
+        emit requestActivateIndex(buttonIndex);*/
     } else if (event->type() == QEvent::Leave) {
         if (!m_buttonGrid || !m_buttonGrid->window()) {
             return false;
