@@ -1,5 +1,5 @@
 /*
-*  Copyright 20120 Michail Vourlakos <mvourlakos@gmail.com>
+*  Copyright 2020 Michail Vourlakos <mvourlakos@gmail.com>
 *
 *  This file is part of Latte-Dock
 *
