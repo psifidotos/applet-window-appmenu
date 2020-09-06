@@ -238,7 +238,6 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
     QMenu *actionMenu = createMenu(idx);
 
     if (actionMenu) {
-
         //this is a workaround where Qt will fail to realize a mouse has been released
         // this happens if a window which does not accept focus spawns a new window that takes focus and X grab
         // whilst the mouse is depressed
@@ -266,6 +265,13 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
 
         if (location() == Plasma::Types::TopEdge) {
             pos.setY(pos.y() + ctx->height());
+        } else if (location() == Plasma::Types::BottomEdge) {
+            pos.setY(pos.y() - actionMenu->height());
+        } else if (location() == Plasma::Types::LeftEdge) {
+            pos.setX(pos.x() + ctx->width());
+        } else {
+            //Right Edge
+            pos.setX(pos.x() - actionMenu->width());
         }
 
         pos = QPoint(qBound(geo.x(), pos.x(), geo.x() + geo.width() - actionMenu->width()),
