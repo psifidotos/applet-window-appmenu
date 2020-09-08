@@ -93,7 +93,11 @@ private:
     QMenu *createMenu(int idx) const;
     void setCurrentIndex(int currentIndex);
     void onMenuAboutToHide();
+    void repositionMenu();
 
+    QPoint proposedPos(QMenu *menu, QRect parentGeometry);
+
+private:
     QString m_menuColorScheme;
     QPointer<DecorationPalette> m_decorationPalette;
 
@@ -101,6 +105,7 @@ private:
 
     int m_currentIndex = -1;
     int m_viewType = FullView;
+    QRect m_currentParentGeometry;
     QPointer<QMenu> m_currentMenu;
     QPointer<QQuickItem> m_buttonGrid;
     QPointer<QAbstractListModel> m_model;

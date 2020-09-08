@@ -220,9 +220,45 @@ void AppMenuApplet::onMenuAboutToHide()
     QCoreApplication::instance()->sendEvent(m_currentMenu->windowHandle()->transientParent(), &e);
 }
 
+void AppMenuApplet::repositionMenu()
+{
+    if (!m_currentMenu) {
+        return;
+    }
+
+    QPoint pos = proposedPos(m_currentMenu, m_currentParentGeometry);
+    m_currentMenu->move(pos);
+}
+
 bool AppMenuApplet::menuIsShown() const
 {
     return m_currentMenu && m_menuVisible;
+}
+
+QPoint AppMenuApplet::proposedPos(QMenu *menu, QRect parentGeometry)
+{
+    if (!menu) {
+        return QPoint();
+    }
+
+    QPoint result = parentGeometry.topLeft();
+    const auto &geo =  menu->windowHandle()->transientParent()->screen()->geometry();
+
+    if (location() == Plasma::Types::TopEdge) {
+        result.setY(result.y() + parentGeometry.height());
+    } else if (location() == Plasma::Types::BottomEdge) {
+        result.setY(result.y() - menu->windowHandle()->height());
+    } else if (location() == Plasma::Types::LeftEdge) {
+        result.setX(result.x() + parentGeometry.width());
+    } else {
+        //Right Edge
+        result.setX(result.x() - menu->windowHandle()->width());
+    }
+
+    result = QPoint(qBound(geo.x(), result.x(), geo.x() + geo.width() - menu->windowHandle()->width()),
+                    qBound(geo.y(), result.y(), geo.y() + geo.height() - menu->windowHandle()->height()));
+
+    return result;
 }
 
 void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
@@ -259,44 +295,31 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         }
         //end workaround
 
-        const auto &geo = ctx->window()->screen()->geometry();
-
-        QPoint pos = ctx->window()->mapToGlobal(ctx->mapToScene(QPointF()).toPoint());
-
-        if (location() == Plasma::Types::TopEdge) {
-            pos.setY(pos.y() + ctx->height());
-        } else if (location() == Plasma::Types::BottomEdge) {
-            pos.setY(pos.y() - actionMenu->height());
-        } else if (location() == Plasma::Types::LeftEdge) {
-            pos.setX(pos.x() + ctx->width());
-        } else {
-            //Right Edge
-            pos.setX(pos.x() - actionMenu->width());
-        }
-
-        pos = QPoint(qBound(geo.x(), pos.x(), geo.x() + geo.width() - actionMenu->width()),
-                     qBound(geo.y(), pos.y(), geo.y() + geo.height() - actionMenu->height()));
-
         if (view() == FullView) {
             // hide the old menu only after showing the new one to avoid brief flickering
             // in other windows as they briefly re-gain focus
             QMenu *oldMenu = m_currentMenu;
-            m_currentMenu = actionMenu;
 
             if (oldMenu && oldMenu != actionMenu) {
                 //don't initialize the currentIndex when another menu is already shown
                 disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
+                disconnect(oldMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
+                disconnect(oldMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
                 disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
                 oldMenu->hide();
             }
         }
+
+        QPoint pos = ctx->window()->mapToGlobal(ctx->mapToScene(QPointF()).toPoint());
+        m_currentParentGeometry = QRect(pos, QSize(ctx->width(), ctx->height()));
+        m_currentMenu = actionMenu;
 
         //! Hiding the old menu before showing the new one is needed by wayland.
         //! Without that code reordering half of menus in wayland are not shown
         //! at all and wayland is complaining
         actionMenu->winId();//create window handle
         actionMenu->windowHandle()->setTransientParent(ctx->window());
-        actionMenu->popup(pos);
+        pos = proposedPos(actionMenu, m_currentParentGeometry);
 
         if (view() == FullView) {
             actionMenu->installEventFilter(this);
@@ -307,6 +330,20 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
 
         // FIXME TODO connect only once
         connect(actionMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide, Qt::UniqueConnection);
+
+        if (location() == Plasma::Types::BottomEdge) {
+            //! menu width is used in menu position only for bottom edge
+            //! this is needed because menu width on first showing is not the last presented to the user and this is
+            //! why menus look out of place otherwise
+            connect(actionMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
+        } else if (location() == Plasma::Types::RightEdge) {
+            //! menu height is used in menu position only for right edge
+            //! this is needed because menu width on first showing is not the last presented to the user and this is
+            //! why menus look out of place otherwise
+            connect(actionMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
+        }
+
+        actionMenu->popup(pos);
 
         emit menuIsShownChanged();
     } else { // is it just an action without a menu?
