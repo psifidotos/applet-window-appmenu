@@ -45,6 +45,16 @@ Item{
         }
     }
 
+    function sendValidVisibility() {
+        if (!buttonGrid.containsMouse && !keystateSource.modifierIsPressed) {
+            broadcaster.hiddenFromBroadcast = true;
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setVisible", true);
+        } else {
+            broadcaster.hiddenFromBroadcast = false;
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setVisible", false);
+        }
+    }
+
     Component.onDestruction: {
         if (latteBridge) {
             latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setCooperation", false);
@@ -103,18 +113,21 @@ Item{
         }
     }
 
+    Connections {
+        target: keystateSource
+        onModifierIsPressedChanged: {
+            if (broadcaster.cooperationEstablished) {
+                sendValidVisibility();
+            }
+        }
+    }
+
     Timer{
         id: broadcasterDelayer
         interval: 5
         onTriggered: {
             if (cooperationEstablished) {
-                if (!buttonGrid.containsMouse) {
-                    broadcaster.hiddenFromBroadcast = true;
-                    latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setVisible", true);
-                } else {
-                    broadcaster.hiddenFromBroadcast = false;
-                    latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "setVisible", false);
-                }
+                sendValidVisibility();
             }
         }
     }

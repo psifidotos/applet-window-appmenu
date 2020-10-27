@@ -269,6 +269,8 @@ Item {
             id: keystateSource
             engine: "keystate"
             connectedSources: ["Alt"]
+
+            readonly property bool modifierIsPressed: data.Alt && data.Alt.Pressed
         }
 
         MouseArea {
