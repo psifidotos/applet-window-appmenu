@@ -274,9 +274,9 @@ Item {
         MouseArea {
             id: fullViewBackMousearea
             anchors.left: gridFlickable.right
-            width: parent.width - gridFlickable.width
+            width: visible ? parent.width - gridFlickable.width : 0 //! zero helps to release containsmouse on first showing
             height: parent.height - 1
-            visible: broadcaster.cooperationEstablished && root.inFullView
+            visible: broadcaster.cooperationEstablished && root.inFullView && (fullLayout.status !== PlasmaCore.Types.HiddenStatus)
                      && plasmoid.configuration.fillWidth && buttonRepeater.count > 0
             hoverEnabled: true
             propagateComposedEvents: true
@@ -323,7 +323,7 @@ Item {
                     }
 
                     for (var i=0; i<buttonGrid.children.length; ++i) {
-                        if (buttonGrid.children[i] !== buttonRepeater && buttonGrid.children[i].containsMouse) {
+                        if (buttonGrid.children[i] && buttonGrid.children[i] !== buttonRepeater && buttonGrid.children[i].containsMouse) {
                             return true;
                         }
                     }

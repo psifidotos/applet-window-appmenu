@@ -42,11 +42,12 @@ Item {
                 return plasmoid.nativeInterface.currentIndex === buttonIndex;
             }
 
-            return buttonGrid.currentIndex === buttonIndex;
+            return (buttonIndex > -1) && (buttonGrid.currentIndex === buttonIndex);
         }
 
         return buttonMouseArea.containsMouse;
     }
+
     readonly property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
     readonly property int shadow: 3
     readonly property int implicitWidth: {
