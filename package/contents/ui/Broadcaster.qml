@@ -67,6 +67,14 @@ Item{
         }
     }
 
+    onHiddenFromBroadcastChanged: {
+        if (!hiddenFromBroadcast) {
+            //! This way we make sure that if the mouse enters very fast the window title and appmenu showing is triggered
+            //! and the mouse is not inside appmenu when it become visible then window tile must return its visibility
+            validateFirstShowTimer.start();
+        }
+    }
+
     onMenuIsPresentChanged: {
         if (latteBridge) {
             latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "menuIsPresent", menuIsPresent);
@@ -130,5 +138,18 @@ Item{
                 sendValidVisibility();
             }
         }
+    }    
+
+    //! This way we make sure that if the mouse enters very fast the window title and appmenu showing is triggered
+    //! and the mouse is not inside appmenu when it become visible then window tile must return its visibility
+    Timer{
+        id: validateFirstShowTimer
+        interval: 150
+        onTriggered: {
+            if (cooperationEstablished) {
+                sendValidVisibility();
+            }
+        }
     }
+
 }
