@@ -93,6 +93,7 @@ Item {
             latteBridge.actions.setProperty(plasmoid.id, "latteSideColoringEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "activeIndicatorEnabled", false);
             latteBridge.actions.setProperty(plasmoid.id, "windowsTrackingEnabled", true);
+            latteBridge.actions.setProperty(plasmoid.id, "screenEdgeMarginSupported", true);
 
             if (latteBridge.version >= latteBridge.actions.version(0,9,4)) {
                 plasmoid.configuration.supportsActiveWindowSchemes = true;
@@ -102,6 +103,8 @@ Item {
 
     readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
+
+    readonly property int screenEdgeMargin: latteBridge && latteBridge.hasOwnProperty("screenEdgeMargin") ? latteBridge.screenEdgeMargin : 0
 
     Broadcaster {
         id: broadcaster
@@ -216,6 +219,7 @@ Item {
         anchors.fill: parent
         enabled: menuAvailable
         visible: inCompactView
+        screenEdgeMargin: root.screenEdgeMargin
 
         buttonIndex: 0
         icon: "application-menu"
@@ -361,7 +365,8 @@ Item {
                         visible: activeMenu !== ""
 
                         buttonIndex: index
-                        text: activeMenu
+                        screenEdgeMargin: root.screenEdgeMargin
+                        text: activeMenu                        
 
                         onClicked: {
                             plasmoid.nativeInterface.trigger(this, index);
