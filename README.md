@@ -31,7 +31,7 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 
 **Qt elements**: Quick Widgets DBus
 
-**KF5 elements**: Plasma WindowSystem KDecoration2 extra-cmake-modules
+**KF5 elements**: Plasma WindowSystem KDecoration2 Kirigami2 extra-cmake-modules
 
 **X11 libraries**: XCB RandR
 
