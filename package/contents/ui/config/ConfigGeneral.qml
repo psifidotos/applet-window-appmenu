@@ -248,8 +248,8 @@ Item {
 
             type: Kirigami.MessageType.Warning
             text: cfg_showWindowTitleOnMouseExit ?
-                      i18n("Would you like to <b>also activate</b> that behavior to surrounding Window Title?") :
-                      i18n("Would you like to <b>also deactivate</b> that behavior to surrounding Window Title?")
+                      i18n("Would you like <b>also to activate</b> that behavior to surrounding Window Title?") :
+                      i18n("Would you like <b>also to deactivate</b> that behavior to surrounding Window Title?")
 
             actions: [
                 Kirigami.Action {
@@ -269,10 +269,10 @@ Item {
                 }
             ]
 
-            readonly property bool windowTitleOptionTouched: (cfg_showWindowTitleOnMouseExit !== plasmoid.configuration.showWindowTitleOnMouseExit)
+            readonly property bool showWindowTitleTouched: showWindowTitleChk.checked !== plasmoid.configuration.showWindowTitleOnMouseExit;
 
-            onWindowTitleOptionTouchedChanged: {
-                if (windowTitleOptionTouched) {
+            onShowWindowTitleTouchedChanged: {
+                if (showWindowTitleTouched){
                     inlineMessage.visible = true;
                 } else {
                     inlineMessage.visible = false;
