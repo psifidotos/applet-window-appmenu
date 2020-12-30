@@ -50,7 +50,6 @@ Item {
 
     readonly property bool menuOpened: plasmoid.nativeInterface.currentIndex === buttonIndex
     readonly property int shadow: 3
-
     readonly property int implicitWidth: {
         if (itemLoader.item) {
             if (buttonItem.text !== "") {
@@ -75,8 +74,6 @@ Item {
         return 0;
     }
 
-    property int screenEdgeMargin: 0
-
     signal clicked;
     signal scrolledUp(int step);
     signal scrolledDown(int step);
@@ -87,105 +84,39 @@ Item {
         }
     }
 
-    Item {
-        id: edgeRelevantLocatedItem
-        width: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? length : thickness
-        height: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? thickness : length
+    Rectangle {
+        id: button
+        anchors.fill: parent
+        anchors.margins: 1
 
-        readonly property int length: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height
-        readonly property int thickness: (plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.height : parent.width) - screenEdgeMargin
+        radius: buttonItem.shadow
 
-        Rectangle {
-            id: button
-            anchors.fill: parent
-            anchors.topMargin: 1
-            anchors.bottomMargin: 1
-            anchors.leftMargin: buttonItem.shadow
-            anchors.rightMargin: buttonItem.shadow
+        // fake highlighted
+        color: {
+            if (menuOpened) {
+                return enforceLattePalette ? root.latteBridge.palette.highlightColor : theme.highlightColor
+            } else if (buttonItem.containsMouse) {
+                return enforceLattePalette ? root.latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
+            } else {
+                return 'transparent';
+            }
+        }
 
+        layer.enabled: menuOpened || buttonItem.containsMouse
+        layer.effect: DropShadow{
             radius: buttonItem.shadow
-
-            // fake highlighted
-            color: {
-                if (menuOpened) {
-                    return enforceLattePalette ? root.latteBridge.palette.highlightColor : theme.highlightColor
-                } else if (buttonItem.containsMouse) {
-                    return enforceLattePalette ? root.latteBridge.palette.buttonBackgroundColor : theme.buttonBackgroundColor
-                } else {
-                    return 'transparent';
-                }
-            }
-
-            layer.enabled: menuOpened || buttonItem.containsMouse
-            layer.effect: DropShadow{
-                radius: buttonItem.shadow
-                samples: 2 * radius
-                color: "#ff151515"
-            }
+            samples: 2 * radius
+            color: "#ff151515"
         }
+    }
 
-        Loader{
-            id: itemLoader
-            anchors.centerIn: parent
-            anchors.fill: parent
+    Loader{
+        id: itemLoader
+        anchors.centerIn: parent
+        anchors.fill: parent
 
-            active: buttonItem.text !== "" || buttonItem.icon !== ""
-            sourceComponent:  buttonItem.text !== "" ? labelComponent : iconComponent
-        }
-
-        states: [
-            ///Top
-            State {
-                name: "top"
-                when: (plasmoid.location === PlasmaCore.Types.TopEdge)
-                AnchorChanges {
-                    target: edgeRelevantLocatedItem
-                    anchors{top:parent.top; bottom:undefined; left:undefined; right:undefined}
-                }
-                PropertyChanges{
-                    target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:0; topMargin:buttonItem.screenEdgeMargin; bottomMargin:0}
-                }
-            },
-            ///Left
-            State {
-                name: "left"
-                when: (plasmoid.location === PlasmaCore.Types.LeftEdge)
-                AnchorChanges {
-                    target: edgeRelevantLocatedItem
-                    anchors{top:undefined; bottom:undefined; left:parent.left; right:undefined}
-                }
-                PropertyChanges{
-                    target: edgeRelevantLocatedItem
-                    anchors{leftMargin:buttonItem.screenEdgeMargin; rightMargin:0; topMargin:0; bottomMargin:0}
-                }
-            },
-            ///Right
-            State {
-                name: "right"
-                when: (plasmoid.location === PlasmaCore.Types.RightEdge)
-                AnchorChanges {
-                    target: edgeRelevantLocatedItem
-                    anchors{top:undefined; bottom:undefined; left:undefined; right:parent.right}
-                }
-                PropertyChanges{
-                    target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:buttonItem.screenEdgeMargin; topMargin:0; bottomMargin:0}
-                }
-            },
-            ///Default-Bottom
-            State {
-                name: "defaultbottom"
-                AnchorChanges {
-                    target: edgeRelevantLocatedItem
-                    anchors{top:undefined; bottom:parent.bottom; left:undefined; right:undefined}
-                }
-                PropertyChanges{
-                    target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:0; topMargin:0; bottomMargin:buttonItem.screenEdgeMargin}
-                }
-            }
-        ]
+        active: buttonItem.text !== "" || buttonItem.icon !== ""
+        sourceComponent:  buttonItem.text !== "" ? labelComponent : iconComponent
     }
 
     // QMenu opens on press, so we'll replicate that here
