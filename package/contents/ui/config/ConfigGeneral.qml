@@ -25,6 +25,8 @@ import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 
+import org.kde.kirigami 2.4 as Kirigami
+
 import org.kde.private.windowAppMenu 0.1 as AppMenuPrivate
 
 Item {
@@ -60,7 +62,11 @@ Item {
     ColumnLayout {
         id:mainColumn
         spacing: units.largeSpacing
-        Layout.fillWidth: true
+        width:parent.width - anchors.leftMargin * 2
+        height: parent.height
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.leftMargin: 2
 
         GridLayout{
             columns: 2
@@ -232,6 +238,46 @@ Item {
 
         Item {
             Layout.fillHeight: true
+            Layout.fillWidth: true
+        }
+
+        Kirigami.InlineMessage {
+            id: inlineMessage
+            Layout.fillWidth: true
+            Layout.bottomMargin: 5
+
+            type: Kirigami.MessageType.Warning
+            text: cfg_showWindowTitleOnMouseExit ?
+                      i18n("Would you like to <b>also activate</b> that behavior to surrounding Window Title?") :
+                      i18n("Would you like to <b>also deactivate</b> that behavior to surrounding Window Title?")
+
+            actions: [
+                Kirigami.Action {
+                    icon.name: "dialog-yes"
+                    text: i18n("Yes")
+                    onTriggered: {
+                        plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode = cfg_showWindowTitleOnMouseExit;
+                        inlineMessage.visible = false;
+                    }
+                },
+                Kirigami.Action {
+                    icon.name: "dialog-no"
+                    text: "No"
+                    onTriggered: {
+                        inlineMessage.visible = false;
+                    }
+                }
+            ]
+
+            readonly property bool windowTitleOptionTouched: (cfg_showWindowTitleOnMouseExit !== plasmoid.configuration.showWindowTitleOnMouseExit)
+
+            onWindowTitleOptionTouchedChanged: {
+                if (windowTitleOptionTouched) {
+                    inlineMessage.visible = true;
+                } else {
+                    inlineMessage.visible = false;
+                }
+            }
         }
 
     }

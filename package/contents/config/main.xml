@@ -42,6 +42,10 @@
       <default>false</default>
       <label>will become hidden in favour of appmenu when the mouse hovers the applet</label>
     </entry>
+    <entry name="sendActivateWindowTitleCooperationFromEditMode" type="Int">
+        <default>-1</default>
+        <label>-1, means sent. 0, means sent false. 1, means sent true</label>
+    </entry>    
     <entry name="supportsActiveWindowSchemes" type="Bool">
       <default>false</default>
       <label>current option will become available in such case</label>

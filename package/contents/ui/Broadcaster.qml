@@ -33,6 +33,8 @@ Item{
 
     readonly property bool cooperationEstablished: windowTitleRequestsCooperation && isActive
 
+    readonly property int sendActivateWindowTitleCooperationFromEditMode: plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode
+
     function sendMessage() {
         if (cooperationEstablished) {
             broadcasterDelayer.start();
@@ -85,10 +87,13 @@ Item{
         broadcaster.hiddenFromBroadcast = cooperationEstablished;
     }
 
-    onShowWindowTitleChanged: {
-        if (showWindowTitle && inEditMode) {
-            //!when the user chooses to enable cooperation in config window
-            latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "activateWindowTitleCooperationFromEditMode", true);
+    onSendActivateWindowTitleCooperationFromEditModeChanged: {
+        if (plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode >= 0) {
+            latteBridge.actions.broadcastToApplet("org.kde.windowtitle",
+                                                  "activateWindowTitleCooperationFromEditMode",
+                                                  plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode);
+
+            releaseSendActivateWindowTitleCooperation.start();
         }
     }
 
@@ -103,7 +108,7 @@ Item{
             } else if (action === "setCooperation") {
                 broadcaster.windowTitleRequestsCooperation = value;
             } else if (action === "activateAppMenuCooperationFromEditMode") {
-                plasmoid.configuration.showWindowTitleOnMouseExit = true;
+                plasmoid.configuration.showWindowTitleOnMouseExit = value;
             }
         }
     }
@@ -139,6 +144,12 @@ Item{
             }
         }
     }    
+
+    Timer {
+        id: releaseSendActivateWindowTitleCooperation
+        interval: 5
+        onTriggered: plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode = -1;
+    }
 
     //! This way we make sure that if the mouse enters very fast the window title and appmenu showing is triggered
     //! and the mouse is not inside appmenu when it become visible then window tile must return its visibility
