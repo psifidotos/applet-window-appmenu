@@ -95,6 +95,8 @@ private:
     void onMenuAboutToHide();
     void repositionMenu();
 
+    bool inPanel() const;
+
     QPoint proposedPos(QMenu *menu, QRect parentGeometry);
 
 private:
@@ -105,6 +107,7 @@ private:
 
     int m_currentIndex = -1;
     int m_viewType = FullView;
+
     QRect m_currentParentGeometry;
     QPointer<QMenu> m_currentMenu;
     QPointer<QQuickItem> m_buttonGrid;

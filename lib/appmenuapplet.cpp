@@ -261,6 +261,14 @@ QPoint AppMenuApplet::proposedPos(QMenu *menu, QRect parentGeometry)
     return result;
 }
 
+bool AppMenuApplet::inPanel() const
+{
+    return (location() == Plasma::Types::BottomEdge)
+            || (location() == Plasma::Types::TopEdge)
+            || (location() == Plasma::Types::LeftEdge)
+            || (location() == Plasma::Types::RightEdge);
+}
+
 void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
 {
     if (m_currentIndex == idx) {
@@ -392,9 +400,18 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
                 return false;
             }
 
-            // FIXME the panel margin breaks Fitt's law :(
+            // Support Fitt's Law and take care the panel margins
             const QPointF &windowLocalPos = m_buttonGrid->window()->mapFromGlobal(e->globalPos());
-            const QPointF &buttonGridLocalPos = m_buttonGrid->mapFromScene(windowLocalPos);
+            QPointF buttonGridLocalPos = m_buttonGrid->mapFromScene(windowLocalPos);
+
+            if (inPanel() && m_buttonGrid->window()->geometry().contains(e->globalPos()) && !m_buttonGrid->contains(buttonGridLocalPos)) {
+                if (formFactor() == Plasma::Types::Horizontal) {
+                    buttonGridLocalPos.setY(1);
+                } else {
+                    buttonGridLocalPos.setX(1);
+                }
+            }
+
             auto *item = m_buttonGrid->childAt(buttonGridLocalPos.x(), buttonGridLocalPos.y());
 
             if (!item) {
