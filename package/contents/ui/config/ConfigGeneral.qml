@@ -247,7 +247,6 @@ Item {
             id: inlineMessage
             Layout.fillWidth: true
             Layout.bottomMargin: 5
-            visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
 
             type: Kirigami.MessageType.Warning
             text: cfg_showWindowTitleOnMouseExit ?
@@ -282,6 +281,5 @@ Item {
                 }
             }
         }
-
     }
 }
