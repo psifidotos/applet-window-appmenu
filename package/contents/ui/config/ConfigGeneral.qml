@@ -63,7 +63,7 @@ Item {
         id:mainColumn
         spacing: units.largeSpacing
         width:parent.width - anchors.leftMargin * 2
-        height: parent.height
+        height: plasmoid.configuration.containmentType === 2 ? parent.height : undefined
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.leftMargin: 2
@@ -151,6 +151,8 @@ Item {
 
         GridLayout{
             columns: 2
+            /*Plasma panels do not support fillWidth(s) easily any more*/
+            visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
 
             Controls.Label{
                 Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
@@ -245,6 +247,7 @@ Item {
             id: inlineMessage
             Layout.fillWidth: true
             Layout.bottomMargin: 5
+            visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
 
             type: Kirigami.MessageType.Warning
             text: cfg_showWindowTitleOnMouseExit ?

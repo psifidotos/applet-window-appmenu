@@ -54,7 +54,7 @@ Item {
     Layout.minimumWidth: {
         if (inFullView) {
             if (plasmoid.configuration.fillWidth && !inEditMode) {
-                return -1;
+                return inLatte ? -1 : buttonGrid.width;
             }
 
             return inEditMode ? buttonGrid.width : 0
@@ -66,7 +66,7 @@ Item {
     Layout.preferredWidth: {
         if (inFullView) {
             if (plasmoid.configuration.fillWidth && !inEditMode) {
-                return -1;
+                return inLatte ? -1 : buttonGrid.width;
             }
 
             return buttonGrid.width;
@@ -100,6 +100,7 @@ Item {
         }
     }
 
+    readonly property bool inLatte: latteBridge
     readonly property bool latteInEditMode: latteBridge && latteBridge.inEditMode
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
 
