@@ -106,6 +106,7 @@ Item {
     readonly property bool enforceLattePalette: latteBridge && latteBridge.applyPalette && latteBridge.palette
 
     readonly property int screenEdgeMargin: latteBridge && latteBridge.hasOwnProperty("screenEdgeMargin") ? latteBridge.screenEdgeMargin : 0
+    readonly property int thicknessPadding: latteBridge && latteBridge.hasOwnProperty("thicknessPadding") ? latteBridge.thicknessPadding : 1
 
     Broadcaster {
         id: broadcaster
@@ -221,6 +222,7 @@ Item {
         enabled: menuAvailable
         visible: inCompactView
         screenEdgeMargin: root.screenEdgeMargin
+        thicknessPadding: root.thicknessPadding
 
         buttonIndex: 0
         icon: "application-menu"
@@ -367,6 +369,7 @@ Item {
 
                         buttonIndex: index
                         screenEdgeMargin: root.screenEdgeMargin
+                        thicknessPadding: root.thicknessPadding
                         text: activeMenu                        
 
                         onClicked: {

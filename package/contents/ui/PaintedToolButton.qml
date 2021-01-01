@@ -76,6 +76,9 @@ Item {
     }
 
     property int screenEdgeMargin: 0
+    property int thicknessPadding: 1
+
+    readonly property int edge: screenEdgeMargin + thicknessPadding
 
     signal clicked;
     signal scrolledUp(int step);
@@ -93,7 +96,7 @@ Item {
         height: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? thickness : length
 
         readonly property int length: plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.width : parent.height
-        readonly property int thickness: (plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.height : parent.width) - screenEdgeMargin
+        readonly property int thickness: (plasmoid.formFactor === PlasmaCore.Types.Horizontal ? parent.height : parent.width) - screenEdgeMargin - 2*thicknessPadding
 
         Rectangle {
             id: button
@@ -144,7 +147,7 @@ Item {
                 }
                 PropertyChanges{
                     target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:0; topMargin:buttonItem.screenEdgeMargin; bottomMargin:0}
+                    anchors{leftMargin:0; rightMargin:0; topMargin:buttonItem.edge; bottomMargin:0}
                 }
             },
             ///Left
@@ -157,7 +160,7 @@ Item {
                 }
                 PropertyChanges{
                     target: edgeRelevantLocatedItem
-                    anchors{leftMargin:buttonItem.screenEdgeMargin; rightMargin:0; topMargin:0; bottomMargin:0}
+                    anchors{leftMargin:buttonItem.edge; rightMargin:0; topMargin:0; bottomMargin:0}
                 }
             },
             ///Right
@@ -170,7 +173,7 @@ Item {
                 }
                 PropertyChanges{
                     target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:buttonItem.screenEdgeMargin; topMargin:0; bottomMargin:0}
+                    anchors{leftMargin:0; rightMargin:buttonItem.edge; topMargin:0; bottomMargin:0}
                 }
             },
             ///Default-Bottom
@@ -182,7 +185,7 @@ Item {
                 }
                 PropertyChanges{
                     target: edgeRelevantLocatedItem
-                    anchors{leftMargin:0; rightMargin:0; topMargin:0; bottomMargin:buttonItem.screenEdgeMargin}
+                    anchors{leftMargin:0; rightMargin:0; topMargin:0; bottomMargin:buttonItem.edge}
                 }
             }
         ]
