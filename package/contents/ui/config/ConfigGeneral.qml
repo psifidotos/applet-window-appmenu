@@ -274,6 +274,10 @@ Item {
             readonly property bool showWindowTitleTouched: showWindowTitleChk.checked !== plasmoid.configuration.showWindowTitleOnMouseExit;
 
             onShowWindowTitleTouchedChanged: {
+                if (plasmoid.configuration.containmentType !== 2 /*Latte Containment*/) {
+                    visible = false;
+                }
+
                 if (showWindowTitleTouched){
                     inlineMessage.visible = true;
                 } else {
