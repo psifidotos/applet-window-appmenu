@@ -276,6 +276,7 @@ Item {
             onShowWindowTitleTouchedChanged: {
                 if (plasmoid.configuration.containmentType !== 2 /*Latte Containment*/) {
                     visible = false;
+                    return;
                 }
 
                 if (showWindowTitleTouched){
