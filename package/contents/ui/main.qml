@@ -82,6 +82,11 @@ Item {
             return -1;
         }
     }
+
+    Layout.minimumHeight: 0
+    Layout.preferredHeight: -1
+    Layout.maximumHeight: Infinity
+
     //END Layout properties
 
     //BEGIN Latte Dock Communicator
@@ -206,13 +211,14 @@ Item {
             if (root.currentScheme === "_current_") {
                 if (latteSupportsActiveWindowSchemes) {
                     /* colorScheme value was added after Latte v0.9.4*/
-                    return appMenuModel.selectedTracker.lastActiveWindow.colorScheme
+                    return lastActiveTaskItem && lastActiveTaskItem.hasOwnProperty("selectedTracker") ?
+                                lastActiveTaskItem.selectedTracker.colorScheme : "";
                 } else {
                     return "";
                 }
             }
 
-            return plasmoid.configuration.selectedScheme
+            return plasmoid.configuration.selectedScheme;
         }
     }
 
@@ -238,7 +244,7 @@ Item {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable && appMenuModel.visible){
                 return PlasmaCore.Types.ActiveStatus
-            } else if (!inEditMode) {
+            } else if (!inEditMode && !vertical) {
                 return PlasmaCore.Types.HiddenStatus;
             }
 
@@ -350,10 +356,6 @@ Item {
 
                     visible: inEditMode && (buttonRepeater.model === null)
                     text: plasmoid.title
-                    color: enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;
-                    font.bold: true
-                    verticalAlignment: Text.AlignVCenter
-                    horizontalAlignment: Text.AlignHCenter
 
                     screenEdgeMargin: root.screenEdgeMargin
                     thicknessPadding: root.thicknessPadding
@@ -365,8 +367,7 @@ Item {
                         if (appMenuModel.visible
                                    && appMenuModel.menuAvailable
                                    && !appMenuModel.ignoreWindow
-                                   && !broadcaster.hiddenFromBroadcast
-                                   && !(inEditMode && !appMenuModel.selectedTracker)) {
+                                   && !broadcaster.hiddenFromBroadcast) {
                             return appMenuModel;
                         }
 

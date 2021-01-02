@@ -19,6 +19,9 @@
 
 import QtQuick 2.7
 
+import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.core 2.0 as PlasmaCore
+
 Item{
     id: broadcaster
 
@@ -28,7 +31,7 @@ Item{
 
     readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit && !inEditMode
     readonly property bool menuIsPresent: appMenuModel.visible && appMenuModel.menuAvailable && !appMenuModel.ignoreWindow
-    readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled
+    readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled && plasmoid.formFactor === PlasmaCore.Types.Horizontal
     property var windowTitlesRequestCooperation: []
     property int windowTitlesRequestCooperationCount: 0
 
@@ -60,7 +63,13 @@ Item{
 
     Component.onDestruction: broadcoastCooperationRequest(false)
 
-    onIsActiveChanged: broadcoastCooperationRequest(isActive)
+    onIsActiveChanged: {
+        if (!isActive) {
+            hiddenFromBroadcast = false;
+        }
+
+        broadcoastCooperationRequest(isActive)
+    }
 
     onHiddenFromBroadcastChanged: {
         if (!hiddenFromBroadcast) {
