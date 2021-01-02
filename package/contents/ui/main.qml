@@ -49,7 +49,7 @@ Item {
     Plasmoid.status: inFullView ? fullLayout.status : compactLayout.status
 
     //BEGIN Layout properties
-    Layout.fillWidth: inFullView && plasmoid.configuration.fillWidth ? true : root.vertical
+    Layout.fillWidth: inFullView && plasmoid.configuration.fillWidth && !(inLatte && inEditMode) ? true : root.vertical
     Layout.fillHeight: inFullView ? true : !root.vertical
     Layout.minimumWidth: {
         if (inFullView) {
