@@ -340,6 +340,25 @@ Item {
                     return false;
                 }
 
+                CustomLabel {
+                    id: plasmoidTitleLbl
+                    Layout.minimumWidth: implicitWidth
+                    Layout.preferredWidth: Layout.minimumWidth
+
+                    Layout.minimumHeight: fullLayout.height
+                    Layout.preferredHeight: Layout.minimumHeight
+
+                    visible: inEditMode && (buttonRepeater.model === null)
+                    text: plasmoid.title
+                    color: enforceLattePalette ? root.latteBridge.palette.textColor : theme.textColor;
+                    font.bold: true
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
+
+                    screenEdgeMargin: root.screenEdgeMargin
+                    thicknessPadding: root.thicknessPadding
+                }
+
                 Repeater {
                     id: buttonRepeater
                     model: {
@@ -349,8 +368,6 @@ Item {
                                    && !broadcaster.hiddenFromBroadcast
                                    && !(inEditMode && !appMenuModel.selectedTracker)) {
                             return appMenuModel;
-                        } else if (inEditMode) {
-                            return editModeModel;
                         }
 
                         return null;
@@ -454,23 +471,6 @@ Item {
             var maximizedFilter = plasmoid.configuration.filterByMaximized ?  !isLastActiveWindowMaximized : false;
 
             return (activeFilter || maximizedFilter);
-        }
-    }
-
-
-    //! Example model in order to be used in edit mode when there is no
-    //! other menu available
-    ListModel {
-        id: editModeModel
-
-        ListElement {
-            activeMenu: "File"
-        }
-        ListElement {
-            activeMenu: "Edit"
-        }
-        ListElement {
-            activeMenu: "Help"
         }
     }
 
