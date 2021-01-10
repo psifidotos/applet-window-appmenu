@@ -465,7 +465,7 @@ Item {
             plasmoid.nativeInterface.model = appMenuModel
         }
 
-        winId: latteBridge && existsWindowShown ? lastActiveTaskItem.winId : -1
+        winId: latteBridge && existsWindowShown && lastActiveTaskItem ? lastActiveTaskItem.winId : -1
 
         readonly property bool ignoreWindow: {
             var activeFilter = plasmoid.configuration.filterByActive ? !existsWindowActive || !existsWindowShown : false;

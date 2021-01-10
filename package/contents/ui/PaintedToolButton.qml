@@ -279,8 +279,8 @@ Item {
         id: iconComponent
         PlasmaCore.IconItem{
             anchors.centerIn: parent
-            width: thickness
-            height: thickness
+            width: edgeRelevantLocatedItem.thickness
+            height: edgeRelevantLocatedItem.thickness
             enabled:  menuAvailable
             source: buttonItem.icon
 
