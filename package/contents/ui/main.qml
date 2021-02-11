@@ -77,7 +77,7 @@ Item {
 
     Layout.maximumWidth: {
         if (inFullView) {
-            return plasmoid.configuration.fillWidth && !inEditMode ? Infinity : buttonGrid.width;
+            return plasmoid.configuration.fillWidth && !(inLatte && inEditMode) ? Infinity : buttonGrid.width;
         } else {
             return -1;
         }
