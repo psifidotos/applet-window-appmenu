@@ -151,8 +151,9 @@ Item {
 
         GridLayout{
             columns: 2
-            /*Plasma panels do not support fillWidth(s) easily any more*/
-            visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
+            //! Plasma panels do not support fillWidth(s) easily any more.
+            //! This statement needs investigation with use cases in order to be valid
+            //visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
 
             Controls.Label{
                 Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
