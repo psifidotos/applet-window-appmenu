@@ -36,7 +36,6 @@ Item {
 
     readonly property bool vertical: plasmoid.formFactor === PlasmaCore.Types.Vertical
     readonly property bool view: plasmoid.configuration.compactView
-    readonly property bool viewAlwaysVisible: view && plasmoid.configuration.compactViewAlwaysVisible
     readonly property bool inEditMode: plasmoid.userConfiguring || latteInEditMode
     readonly property bool menuAvailable: appMenuModel.menuAvailable
     readonly property bool kcmAuthorized: KCMShell.authorize(["style.desktop"]).length > 0
@@ -245,8 +244,6 @@ Item {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable && appMenuModel.visible){
                 return PlasmaCore.Types.ActiveStatus
-            } else if (!inEditMode && !vertical && !viewAlwaysVisible) {
-                return PlasmaCore.Types.HiddenStatus;
             } else {
                 return PlasmaCore.Types.PassiveStatus;
             }
