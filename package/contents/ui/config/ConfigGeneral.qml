@@ -33,6 +33,7 @@ Item {
     id: configGeneral
 
     property alias cfg_compactView: compactViewRadioButton.checked
+    property alias cfg_compactViewAlwaysVisible: compactViewAlwaysVisibleChk.checked
     property alias cfg_fillWidth: fillWidthChk.checked
     property alias cfg_filterByActive: activeChk.checked
     property alias cfg_filterByMaximized: maximizedChk.checked
@@ -203,8 +204,25 @@ Item {
             }
         }
 
+       GridLayout {
+           columns: 2
+           enabled: cfg_compactView
+
+           Controls.Label {
+               Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
+               text: i18n("Visibility:")
+               horizontalAlignment: Text.AlignRight
+            }
+
+            Controls.CheckBox {
+                id: compactViewAlwaysVisibleChk
+                text: i18n("Always visible")
+            }
+       }
+
         GridLayout{
             columns: 2
+            enabled: !cfg_compactView || !cfg_compactViewAlwaysVisible
 
             Controls.Label{
                 Layout.minimumWidth: Math.max(centerFactor * root.width, minimumWidth)
