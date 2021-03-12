@@ -29,7 +29,7 @@ Item{
 
     readonly property bool showWindowTitle: plasmoid.configuration.showWindowTitleOnMouseExit
 
-    readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit && !inEditMode
+    readonly property bool showWindowTitleEnabled: showWindowTitle && inFullView && !inEditMode
     readonly property bool menuIsPresent: appMenuModel.visible && appMenuModel.menuAvailable && !appMenuModel.ignoreWindow
     readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled && plasmoid.formFactor === PlasmaCore.Types.Horizontal
     property var windowTitlesRequestCooperation: []
