@@ -73,7 +73,8 @@ Item {
 
             return buttonGrid.width;
         } else {
-            return Math.max(compactLayout.implicitWidth, root.height);
+            //! compact scenario
+            return !vertical ? compactLayout.implicitWidth : root.width; //Math.max(compactLayout.implicitWidth, root.height);
         }
     }
 
@@ -86,7 +87,14 @@ Item {
     }
 
     Layout.minimumHeight: 0
-    Layout.preferredHeight: -1
+    Layout.preferredHeight: {
+        if (inFullView) {
+            return -1;
+        } else {
+            //! compact scenario
+            return vertical ? compactLayout.implicitHeight : root.width;
+        }
+    }
     Layout.maximumHeight: Infinity
 
     //END Layout properties
