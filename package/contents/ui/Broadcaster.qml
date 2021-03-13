@@ -28,7 +28,7 @@ Item{
     property bool hiddenFromBroadcast: false
 
     readonly property bool showWindowTitleEnabled: plasmoid.configuration.showWindowTitleOnMouseExit && inFullView && !inEditMode
-    readonly property bool menuIsPresent: appMenuModel.visible && appMenuModel.menuAvailable && !appMenuModel.ignoreWindow
+    readonly property bool menuIsPresent: root.isMenuAccepted
     readonly property bool isActive: plasmoid.configuration.windowTitleIsPresent && showWindowTitleEnabled && plasmoid.formFactor === PlasmaCore.Types.Horizontal
     property var windowTitlesRequestCooperation: []
     property int windowTitlesRequestCooperationCount: 0

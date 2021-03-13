@@ -284,7 +284,7 @@ Item {
             anchors.centerIn: parent
             width: edgeRelevantLocatedItem.thickness
             height: edgeRelevantLocatedItem.thickness
-            enabled:  menuAvailable
+            enabled:  buttonItem.enabled
             source: buttonItem.icon
 
             layer.enabled: enforceLattePalette

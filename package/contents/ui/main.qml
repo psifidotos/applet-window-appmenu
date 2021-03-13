@@ -43,6 +43,8 @@ Item {
     readonly property bool inFullView: !plasmoid.configuration.compactView && plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property bool inCompactView: !inFullView
 
+    readonly property bool isMenuAccepted: appMenuModel.visible && appMenuModel.menuAvailable && !appMenuModel.ignoreWindow
+
     readonly property string currentScheme: plasmoid.configuration.selectedScheme
 
     Plasmoid.preferredRepresentation: plasmoid.fullRepresentation
@@ -225,7 +227,7 @@ Item {
     PaintedToolButton {
         id: compactLayout
         anchors.fill: parent
-        enabled: menuAvailable
+        enabled: root.isMenuAccepted
         visible: inCompactView
         screenEdgeMargin: root.screenEdgeMargin
         thicknessPadding: root.thicknessPadding
@@ -362,10 +364,7 @@ Item {
                 Repeater {
                     id: buttonRepeater
                     model: {
-                        if (appMenuModel.visible
-                                   && appMenuModel.menuAvailable
-                                   && !appMenuModel.ignoreWindow
-                                   && !broadcaster.hiddenFromBroadcast) {
+                        if (root.isMenuAccepted && !broadcaster.hiddenFromBroadcast) {
                             return appMenuModel;
                         }
 
