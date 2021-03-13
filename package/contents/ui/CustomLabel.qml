@@ -92,6 +92,9 @@ Item {
             ///Default-Bottom
             State {
                 name: "defaultbottom"
+                when: (plasmoid.location !== PlasmaCore.Types.TopEdge)
+                      && (plasmoid.location !== PlasmaCore.Types.LeftEdge)
+                      && (plasmoid.location !== PlasmaCore.Types.RightEdge)
                 AnchorChanges {
                     target: customLbl
                     anchors{top:undefined; bottom:parent.bottom; left:parent.left; right:undefined}
