@@ -303,23 +303,23 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         }
         //end workaround
 
-        if (view() == FullView) {
-            // hide the old menu only after showing the new one to avoid brief flickering
-            // in other windows as they briefly re-gain focus
-            QMenu *oldMenu = m_currentMenu;
+        // hide the old menu only after showing the new one to avoid brief flickering
+        // in other windows as they briefly re-gain focus
+        QMenu *oldMenu = m_currentMenu;
 
-            if (oldMenu && oldMenu != actionMenu) {
-                //don't initialize the currentIndex when another menu is already shown
-                disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
-                disconnect(oldMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
-                disconnect(oldMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
-                disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
-                oldMenu->hide();
-            }
+        if (oldMenu && oldMenu != actionMenu) {
+            //don't initialize the currentIndex when another menu is already shown
+            disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
+            disconnect(oldMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
+            disconnect(oldMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
+            disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
+            oldMenu->hide();
         }
 
         QPoint pos = ctx->window()->mapToGlobal(ctx->mapToScene(QPointF()).toPoint());
         m_currentParentGeometry = QRect(pos, QSize(ctx->width(), ctx->height()));
+
+        bool firstmenuinitialization{m_currentMenu != actionMenu};
         m_currentMenu = actionMenu;
 
         //! Hiding the old menu before showing the new one is needed by wayland.
@@ -336,18 +336,10 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         setCurrentIndex(idx);
         m_menuVisible = true;
 
-        // FIXME TODO connect only once
-        connect(actionMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide, Qt::UniqueConnection);
-
-        if (location() == Plasma::Types::BottomEdge) {
-            //! menu width is used in menu position only for bottom edge
-            //! this is needed because menu width on first showing is not the last presented to the user and this is
-            //! why menus look out of place otherwise
+        if (firstmenuinitialization) {
+            connect(actionMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide, Qt::UniqueConnection);
+            //! update menu positioning if menu width/height changed
             connect(actionMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
-        } else if (location() == Plasma::Types::RightEdge) {
-            //! menu height is used in menu position only for right edge
-            //! this is needed because menu width on first showing is not the last presented to the user and this is
-            //! why menus look out of place otherwise
             connect(actionMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
         }
 
