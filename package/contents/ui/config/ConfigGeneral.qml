@@ -151,6 +151,7 @@ Item {
 
         GridLayout{
             columns: 2
+            enabled: !compactViewRadioButton.checked
             //! Plasma panels do not support fillWidth(s) easily any more.
             //! This statement needs investigation with use cases in order to be valid
             //visible: plasmoid.configuration.containmentType === 2 /*Latte Containment*/
