@@ -244,11 +244,9 @@ Item {
                 return PlasmaCore.Types.NeedsAttentionStatus;
             } else if (menuAvailable && appMenuModel.visible){
                 return PlasmaCore.Types.ActiveStatus
-            } else if (!inEditMode && !vertical) {
-                return PlasmaCore.Types.HiddenStatus;
+            } else {
+                return PlasmaCore.Types.PassiveStatus;
             }
-
-            return PlasmaCore.Types.PassiveStatus;
         }
     }
 
