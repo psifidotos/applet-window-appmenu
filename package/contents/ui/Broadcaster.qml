@@ -168,7 +168,7 @@ Item{
 
     Timer{
         id: broadcasterDelayer
-        interval: 5
+        interval: 50
         onTriggered: {
             if (cooperationEstablished) {
                 sendValidVisibility();
