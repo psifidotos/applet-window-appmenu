@@ -37,17 +37,6 @@ Item{
 
     readonly property int sendActivateWindowTitleCooperationFromEditMode: plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode
 
-    function sendMessage() {
-        if (cooperationEstablished) {
-            broadcasterDelayer.start();
-        }
-    }
-
-    function cancelMessage() {
-        if (cooperationEstablished) {
-            broadcasterDelayer.stop();
-        }
-    }
 
     function sendValidVisibility() {
         if (!buttonGrid.containsMouse && !keystateSource.modifierIsPressed) {
@@ -149,9 +138,9 @@ Item{
         onContainsMouseChanged: {
             if (broadcaster.cooperationEstablished) {
                 if (buttonGrid.containsMouse) {
-                    broadcaster.cancelMessage();
+                    broadcasterMouseOutDelayer.stop();
                 } else {
-                    broadcaster.sendMessage();
+                    broadcasterMouseOutDelayer.start();
                 }
             }
         }
@@ -167,11 +156,13 @@ Item{
     }
 
     Timer{
-        id: broadcasterDelayer
-        interval: 50
+        id: broadcasterMouseOutDelayer
+        interval: 150
         onTriggered: {
             if (cooperationEstablished) {
-                sendValidVisibility();
+                if (!buttonGrid.containsMouse && !keystateSource.modifierIsPressed) {
+                    sendValidVisibility();
+                }
             }
         }
     }    
