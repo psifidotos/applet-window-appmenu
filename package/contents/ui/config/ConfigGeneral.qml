@@ -67,50 +67,6 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 2
 
-        Kirigami.InlineMessage {
-            id: inlineMessage
-            Layout.fillWidth: true
-            Layout.bottomMargin: 5
-
-            type: Kirigami.MessageType.Warning
-            text: cfg_showWindowTitleOnMouseExit ?
-                      i18n("Would you like <b>also to activate</b> that behavior to surrounding Window Title?") :
-                      i18n("Would you like <b>also to deactivate</b> that behavior to surrounding Window Title?")
-
-            actions: [
-                Kirigami.Action {
-                    icon.name: "dialog-yes"
-                    text: i18n("Yes")
-                    onTriggered: {
-                        plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode = cfg_showWindowTitleOnMouseExit;
-                        inlineMessage.visible = false;
-                    }
-                },
-                Kirigami.Action {
-                    icon.name: "dialog-no"
-                    text: "No"
-                    onTriggered: {
-                        inlineMessage.visible = false;
-                    }
-                }
-            ]
-
-            readonly property bool showWindowTitleTouched: showWindowTitleChk.checked !== plasmoid.configuration.showWindowTitleOnMouseExit;
-
-            onShowWindowTitleTouchedChanged: {
-                if (plasmoid.configuration.containmentType !== 2 /*Latte Containment*/) {
-                    visible = false;
-                    return;
-                }
-
-                if (showWindowTitleTouched){
-                    inlineMessage.visible = true;
-                } else {
-                    inlineMessage.visible = false;
-                }
-            }
-        }
-
         GridLayout{
             columns: 2
 
@@ -244,6 +200,50 @@ Item {
                 text: i18n("Maximize/restore active window on mouse wheel up/down")
                 visible: plasmoid.configuration.containmentType !== 2 /*non-Latte Containment*/
                 enabled: fillWidthChk.checked
+            }
+        }
+
+        Kirigami.InlineMessage {
+            id: inlineMessage
+            Layout.fillWidth: true
+            Layout.bottomMargin: 5
+
+            type: Kirigami.MessageType.Warning
+            text: cfg_showWindowTitleOnMouseExit ?
+                      i18n("Would you like <b>also to activate</b> that behavior to surrounding Window Title?") :
+                      i18n("Would you like <b>also to deactivate</b> that behavior to surrounding Window Title?")
+
+            actions: [
+                Kirigami.Action {
+                    icon.name: "dialog-yes"
+                    text: i18n("Yes")
+                    onTriggered: {
+                        plasmoid.configuration.sendActivateWindowTitleCooperationFromEditMode = cfg_showWindowTitleOnMouseExit;
+                        inlineMessage.visible = false;
+                    }
+                },
+                Kirigami.Action {
+                    icon.name: "dialog-no"
+                    text: "No"
+                    onTriggered: {
+                        inlineMessage.visible = false;
+                    }
+                }
+            ]
+
+            readonly property bool showWindowTitleTouched: showWindowTitleChk.checked !== plasmoid.configuration.showWindowTitleOnMouseExit;
+
+            onShowWindowTitleTouchedChanged: {
+                if (plasmoid.configuration.containmentType !== 2 /*Latte Containment*/) {
+                    visible = false;
+                    return;
+                }
+
+                if (showWindowTitleTouched){
+                    inlineMessage.visible = true;
+                } else {
+                    inlineMessage.visible = false;
+                }
             }
         }
 
