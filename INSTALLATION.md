@@ -20,7 +20,7 @@ sudo zypper in -y xrandr cmake make gcc gcc-c++ extra-cmake-modules libqt5-qtbas
 
 ### Fedora
 ```
-sudo dnf install make cmake extra-cmake-modules qt5-qtdeclarative-devel kf5-plasma-devel qt5-qtx11extras-devel gcc-c++ libSM-devel kf5-kconfigwidgets-devel kdecoration-devel
+sudo dnf install make cmake extra-cmake-modules qt5-qtdeclarative-devel kf5-plasma-devel qt5-qtx11extras-devel gcc-c++ libSM-devel kf5-kconfigwidgets-devel kdecoration-devel kf5-kitemmodels-devel plasma-workspace-devel kf5-kwayland-devel 
 ```
 
 ### Building and Installing
