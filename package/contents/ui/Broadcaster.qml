@@ -99,7 +99,7 @@ Item{
             var updateWindowTitleCooperations = false;
 
             if (cooperationEstablished && action === "setVisible") {
-                broadcaster.hiddenFromBroadcast = !value;
+                broadcaster.hiddenFromBroadcast = !buttonGrid.containsMouse && !value;
             } else if (action === "isPresent") {
                 plasmoid.configuration.windowTitleIsPresent = true;
                 latteBridge.actions.broadcastToApplet("org.kde.windowtitle", "isPresent", true);
