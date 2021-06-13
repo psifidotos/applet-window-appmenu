@@ -1,5 +1,17 @@
 ### CHANGELOG
 
+#### Version 0.7.0
+
+* fix occasional crash when menu is hiding
+* fixes when present in plasma panels
+* position menus relevant to screen edge
+* add filter for maximized windows
+* apply filters properly for compact button scenario
+* respect Fitt's law for floating latte panels
+* position menus relevant to entire screen geometry
+* add option to enable unity behavior in neighbour window title applets
+* fixes for unity behavior in latte panels
+
 #### Version 0.6.0
 
 * new option to support color schemes for menus. For Latte a new option to colorize the menus based on the current window color scheme is already present.
