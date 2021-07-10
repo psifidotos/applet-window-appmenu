@@ -56,7 +56,7 @@ Item {
             if (buttonItem.text !== "") {
                 return itemLoader.item.implicitWidth + plasmoid.configuration.spacing * 2 + 2*shadow;
             } else {
-                return itemLoader.item.implicitWidth + 2*shadow;
+                return itemLoader.item.implicitWidth + units.smallspacing * 2 + 2*shadow;
             }
         }
 
@@ -68,7 +68,7 @@ Item {
             if (buttonItem.text !== "") {
                 return itemLoader.item.implicitHeight + units.smallspacing * 2 + 2*shadow;
             } else {
-                return itemLoader.item.implicitHeight + 2*shadow;
+                return itemLoader.item.implicitHeight + units.smallspacing * 2 + 2*shadow;
             }
         }
 
