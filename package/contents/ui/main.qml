@@ -473,10 +473,11 @@ Item {
         winId: latteBridge && existsWindowShown && lastActiveTaskItem ? lastActiveTaskItem.winId : -1
 
         readonly property bool ignoreWindow: {
-            var activeFilter = plasmoid.configuration.filterByActive ? !existsWindowActive || !existsWindowShown : false;
-            var maximizedFilter = plasmoid.configuration.filterByMaximized ?  !isLastActiveWindowMaximized : false;
+            var shownFilter = !existsWindowShown;
+            var activeFilter = plasmoid.configuration.filterByActive ? !existsWindowActive : false;
+            var maximizedFilter = plasmoid.configuration.filterByMaximized ? !isLastActiveWindowMaximized : false;
 
-            return (activeFilter || maximizedFilter);
+            return (shownFilter || activeFilter || maximizedFilter);
         }
     }
 
