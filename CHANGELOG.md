@@ -1,5 +1,11 @@
 ### CHANGELOG
 
+#### Version 0.7.1
+
+* do not show any appmenu on empty and inactive screens
+* improve compact button spacing
+* show proper popup menu for vertical panels
+
 #### Version 0.7.0
 
 * fix occasional crash when menu is hiding
