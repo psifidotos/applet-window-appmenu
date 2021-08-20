@@ -396,7 +396,17 @@ bool AppMenuApplet::eventFilter(QObject *watched, QEvent *event)
             const QPointF &windowLocalPos = m_buttonGrid->window()->mapFromGlobal(e->globalPos());
             QPointF buttonGridLocalPos = m_buttonGrid->mapFromScene(windowLocalPos);
 
-            if (inPanel() && m_buttonGrid->window()->geometry().contains(e->globalPos()) && !m_buttonGrid->contains(buttonGridLocalPos)) {
+            // In Latte panel >= v0.10 we can access applets visual geometry
+            QVariant appletsVisualGeomVariant = m_buttonGrid->window() ? m_buttonGrid->window()->property("_applets_layout_geometry") : QVariant();
+            QRect windowVisualGeom = m_buttonGrid->window()->geometry();
+
+            if (appletsVisualGeomVariant.isValid()) {
+                QRect appletsVisualGeom = appletsVisualGeomVariant.toRect();
+                appletsVisualGeom.moveTopLeft(windowVisualGeom.topLeft());
+                windowVisualGeom = appletsVisualGeom;
+            }
+
+            if (inPanel() && windowVisualGeom.contains(e->globalPos()) && !m_buttonGrid->contains(buttonGridLocalPos)) {
                 if (formFactor() == Plasma::Types::Horizontal) {
                     buttonGridLocalPos.setY(1);
                 } else {
