@@ -303,18 +303,7 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         }
         //end workaround
 
-        // hide the old menu only after showing the new one to avoid brief flickering
-        // in other windows as they briefly re-gain focus
         QMenu *oldMenu = m_currentMenu;
-
-        if (oldMenu && oldMenu != actionMenu) {
-            //don't initialize the currentIndex when another menu is already shown
-            disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
-            disconnect(oldMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
-            disconnect(oldMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
-            disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
-            oldMenu->hide();
-        }
 
         QPoint pos = ctx->window()->mapToGlobal(ctx->mapToScene(QPointF()).toPoint());
         m_currentParentGeometry = QRect(pos, QSize(ctx->width(), ctx->height()));
@@ -344,6 +333,17 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         }
 
         actionMenu->popup(pos);
+
+        // hide the old menu only after showing the new one to avoid brief flickering
+        // in other windows as they briefly re-gain focus
+        if (oldMenu && oldMenu != actionMenu) {
+            //don't initialize the currentIndex when another menu is already shown
+            disconnect(oldMenu, &QMenu::aboutToHide, this, &AppMenuApplet::onMenuAboutToHide);
+            disconnect(oldMenu->windowHandle(), &QWindow::widthChanged, this, &AppMenuApplet::repositionMenu);
+            disconnect(oldMenu->windowHandle(), &QWindow::heightChanged, this, &AppMenuApplet::repositionMenu);
+            disconnect(oldMenu, &QObject::destroyed, this, &AppMenuApplet::menuIsShownChanged);
+            oldMenu->hide();
+        }
 
         emit menuIsShownChanged();
     } else { // is it just an action without a menu?
