@@ -1,5 +1,10 @@
 ### CHANGELOG
 
+#### Version 0.8.0
+
+* use applet geometry to accept mouse events when inside latte docks and panels
+* show menu only after the previous one has already become hidden
+
 #### Version 0.7.1
 
 * do not show any appmenu on empty and inactive screens

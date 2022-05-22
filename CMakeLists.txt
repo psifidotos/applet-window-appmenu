@@ -3,7 +3,7 @@ project(applet_window_appmenu)
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 
 set(CMAKE_CXX_STANDARD 14)
-set(VERSION 0.7.1)
+set(VERSION 0.8.0)
 set(AUTHOR "Michail Vourlakos")
 set(EMAIL "mvourlakos@gmail.com")
 
