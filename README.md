@@ -22,6 +22,15 @@ This is a Plasma 5 applet that shows the current window appmenu in your panels. 
 <i>settings window</i>
 </p>
 
+# Features
+
+- Latte Dock Compliance: Auto color support
+- Latte Dock Compliance: Show menus from child windows and not only from the main window
+- Latte Dock Compliance: Provide Unity-style behavior to hide and show in conjuction with [Window Title applet](https://github.com/psifidotos/applet-window-title)
+- Latte Dock Compliance: Scroll through your menus when your panel free space is not sufficient
+- Provide spacing option
+- Customise your menu colors based on your system color schemes
+
 # Requires
 
 - Qt >= 5.9
