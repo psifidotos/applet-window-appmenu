@@ -39,8 +39,12 @@
 #include <KWindowSystem>
 
 int AppMenuApplet::s_refs = 0;
-namespace {
-QString viewService() { return QStringLiteral("org.kde.kappmenuview"); }
+namespace
+{
+QString viewService()
+{
+    return QStringLiteral("org.kde.kappmenuview");
+}
 }
 
 AppMenuApplet::AppMenuApplet(QObject *parent, const QVariantList &data)
@@ -148,7 +152,7 @@ void AppMenuApplet::setMenuColorScheme(const QString &scheme)
 
     if (!m_menuColorScheme.isEmpty()) {
         m_decorationPalette->deleteLater();
-        m_decorationPalette = new DecorationPalette(scheme);\
+        m_decorationPalette = new DecorationPalette(scheme);
     } else {
         m_decorationPalette->deleteLater();
     }
@@ -175,21 +179,14 @@ QMenu *AppMenuApplet::createMenu(int idx) const
     QAction *action = nullptr;
 
     if (view() == CompactView) {
-        menu = new QMenu();
-
-        for (int i = 0; i < m_model->rowCount(); i++) {
-            const QModelIndex index = m_model->index(i, 0);
-            const QVariant data = m_model->data(index, AppMenuModel::ActionRole);
-            action = (QAction *)data.value<void *>();
-            menu->addAction(action);
+        auto menuAction = static_cast<QAction*>(m_model->data(QModelIndex(), AppMenuModel::ActionRole).value<void *>());
+        if (menuAction) {
+            menu = menuAction->menu();
         }
-
-        menu->setAttribute(Qt::WA_DeleteOnClose);
     } else if (view() == FullView) {
         const QModelIndex index = m_model->index(idx, 0);
         const QVariant data = m_model->data(index, AppMenuModel::ActionRole);
         action = (QAction *)data.value<void *>();
-
         if (action) {
             menu = action->menu();
         }
@@ -290,8 +287,7 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
 
         //by releasing manually we avoid that situation
 
-        if (KWindowSystem::isPlatformX11()) {
-            //! Under wayland is not needed
+
             auto ungrabMouseHack = [ctx]() {
                 if (ctx && ctx->window() && ctx->window()->mouseGrabberItem()) {
                     // FIXME event forge thing enters press and hold move mode :/
@@ -300,7 +296,6 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
             };
 
             QTimer::singleShot(0, ctx, ungrabMouseHack);
-        }
         //end workaround
 
         QMenu *oldMenu = m_currentMenu;
@@ -311,16 +306,16 @@ void AppMenuApplet::trigger(QQuickItem *ctx, int idx)
         bool firstmenuinitialization{m_currentMenu != actionMenu};
         m_currentMenu = actionMenu;
 
+        if (view() == FullView) {
+            actionMenu->installEventFilter(this);
+        }
+
         //! Hiding the old menu before showing the new one is needed by wayland.
         //! Without that code reordering half of menus in wayland are not shown
         //! at all and wayland is complaining
         actionMenu->winId();//create window handle
         actionMenu->windowHandle()->setTransientParent(ctx->window());
         pos = proposedPos(actionMenu, m_currentParentGeometry);
-
-        if (view() == FullView) {
-            actionMenu->installEventFilter(this);
-        }
 
         setCurrentIndex(idx);
         m_menuVisible = true;
