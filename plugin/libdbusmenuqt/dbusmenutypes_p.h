@@ -1,25 +1,10 @@
 /* This file is part of the dbusmenu-qt library
-   Copyright 2009 Canonical
-   Author: Aurelien Gateau <aurelien.gateau@canonical.com>
+    SPDX-FileCopyrightText: 2009 Canonical
+    SPDX-FileContributor: Aurelien Gateau <aurelien.gateau@canonical.com>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public
-   License (LGPL) as published by the Free Software Foundation;
-   either version 2 of the License, or (at your option) any later
-   version.
-
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public License
-   along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+    SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef DBUSMENUTYPES_P_H
-#define DBUSMENUTYPES_P_H
+#pragma once
 
 // Qt
 #include <QList>
@@ -32,8 +17,7 @@ class QDBusArgument;
 /**
  * Internal struct used to communicate on DBus
  */
-struct DBusMenuItem
-{
+struct DBusMenuItem {
     int id;
     QVariantMap properties;
 };
@@ -47,13 +31,11 @@ typedef QList<DBusMenuItem> DBusMenuItemList;
 
 Q_DECLARE_METATYPE(DBusMenuItemList)
 
-
 //// DBusMenuItemKeys
 /**
  * Represents a list of keys for a menu item
  */
-struct DBusMenuItemKeys
-{
+struct DBusMenuItemKeys {
     int id;
     QStringList properties;
 };
@@ -73,8 +55,7 @@ Q_DECLARE_METATYPE(DBusMenuItemKeysList)
  * DBusMenuLayoutItemList.
  */
 struct DBusMenuLayoutItem;
-struct DBusMenuLayoutItem
-{
+struct DBusMenuLayoutItem {
     int id;
     QVariantMap properties;
     QList<DBusMenuLayoutItem> children;
@@ -97,4 +78,3 @@ QDBusArgument &operator<<(QDBusArgument &argument, const DBusMenuShortcut &);
 const QDBusArgument &operator>>(const QDBusArgument &argument, DBusMenuShortcut &);
 
 void DBusMenuTypes_register();
-#endif /* DBUSMENUTYPES_P_H */

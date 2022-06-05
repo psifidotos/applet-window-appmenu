@@ -1,32 +1,16 @@
 /* This file is part of the dbusmenu-qt library
-   Copyright 2009 Canonical
-   Author: Aurelien Gateau <aurelien.gateau@canonical.com>
+    SPDX-FileCopyrightText: 2009 Canonical
+    SPDX-FileContributor: Aurelien Gateau <aurelien.gateau@canonical.com>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public
-   License (LGPL) as published by the Free Software Foundation;
-   either version 2 of the License, or (at your option) any later
-   version.
-
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
-
-   You should have received a copy of the GNU Library General Public License
-   along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+    SPDX-License-Identifier: LGPL-2.0-or-later
 */
-#ifndef DBUSMENUIMPORTER_H
-#define DBUSMENUIMPORTER_H
+#pragma once
 
 // Qt
 #include <QObject>
 
 class QAction;
 class QDBusPendingCallWatcher;
-class QDBusVariant;
 class QIcon;
 class QMenu;
 
@@ -47,7 +31,6 @@ public:
 
     ~DBusMenuImporter() override;
 
-
     QAction *actionForId(int id) const;
 
     /**
@@ -59,7 +42,7 @@ public Q_SLOTS:
     /**
      * Load the menu
      *
-     * Will emit menuUpdated() when complete.
+     * Will Q_EMIT menuUpdated() when complete.
      * This should be done before showing a menu
      */
     void updateMenu();
@@ -109,5 +92,3 @@ private:
     // Use Q_PRIVATE_SLOT to avoid exposing DBusMenuItemList
     Q_PRIVATE_SLOT(d, void slotItemsPropertiesUpdated(const DBusMenuItemList &updatedList, const DBusMenuItemKeysList &removedList))
 };
-
-#endif /* DBUSMENUIMPORTER_H */
