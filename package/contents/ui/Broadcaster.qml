@@ -147,6 +147,15 @@ Item{
         }
     }
 
+    Connections {
+        target: appMenuModel
+        onWinIdChanged: {
+            if (broadcaster.cooperationEstablished) {
+                sendValidVisibility();
+            }
+        }
+    }
+
     Timer{
         id: broadcasterMouseOutDelayer
         interval: 150
