@@ -5,7 +5,7 @@ set(appmenuapplet_SRCS
 
 add_library(plasma_applet_windowappmenu MODULE ${appmenuapplet_SRCS})
 
-kcoreaddons_desktop_to_json(plasma_applet_windowappmenu ../package/metadata.desktop)
+kcoreaddons_desktop_to_json(plasma_applet_windowappmenu ../package/metadata.json)
 
 target_link_libraries(plasma_applet_windowappmenu
                       Qt5::Widgets
