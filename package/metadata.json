@@ -1,0 +1,23 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "mvourlakos@gmail.com",
+                "Name": "Michail Vourlakos"
+            }
+        ],
+        "Category": "Windows and Tasks",
+        "Description": "Shows the current window menu",
+        "Icon": "show-menu",
+        "Id": "org.kde.windowappmenu",
+        "License": "GPL-2.0+",
+        "Name": "Window AppMenu",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "0.8.0",
+        "Website": "https://github.com/psifidotos/applet-window-appmenu"
+    },
+    "X-Plasma-API": "declarativeappletscript",
+    "X-Plasma-MainScript": "ui/main.qml"
+}
