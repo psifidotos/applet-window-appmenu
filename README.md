@@ -1,3 +1,5 @@
+NOTE: THIS FORK IS ARCHIVED, USE WITH RISK
+
 # Window AppMenu Applet
 
 This is a Plasma 5 applet that shows the current window appmenu in your panels. This plasmoid is coming from [Latte land](https://phabricator.kde.org/source/latte-dock/repository/master/) but it can also support Plasma panels.
